@@ -9,13 +9,10 @@
     <xacro:property name="M_PI" value="3.14159"/>
 
     <!-- Vehicle Geometries -->
-    <xacro:property name="base_x_size" value="0.9250000" />
-    <xacro:property name="base_y_size" value="0.380000" />
-    <xacro:property name="base_z_size" value="0.210000" />
-
     <xacro:property name="wheelbase" value="0.64857" />
     <xacro:property name="track" value="0.56" />
     <xacro:property name="wheel_vertical_offset" value="-0.0165" />
+    <xacro:property name="wheel_steering_offset" value="0.06" />
 
     <xacro:property name="wheel_length" value="1.1653e-01" />
     <xacro:property name="wheel_radius" value="1.6459e-01" />
@@ -26,6 +23,18 @@
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/base_link.dae" />
+            </geometry>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0.12" rpy="0 0 0" />
+            <geometry>
+                <box size="0.75 0.15 0.08"/>
+            </geometry>
+        </visual>
+        <visual>
+            <origin xyz="0.17 0 0.06" rpy="0 0 0" />
+            <geometry>
+                <box size="0.45 0.37 0.18"/>
             </geometry>
         </visual>
         <collision>
@@ -57,11 +66,11 @@
 
     <!-- front right wheel -->
     <joint name="front_right_steering" type="revolute">
-        <origin xyz="-${wheelbase/2} ${track/2-0.06} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="-${wheelbase/2} ${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="front_right_hub_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
-        <limit lower="-1.57" upper="1.57" effort="20" velocity="0.8" />
+        <limit lower="-0.785" upper="0.785" effort="20" velocity="0.8" />
     </joint>
 
     <link name="front_right_hub_link">
@@ -71,7 +80,7 @@
             <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171" />
         </inertial>
         <visual>
-            <origin xyz="0 0.06 0" rpy="0 0 0" />
+            <origin xyz="0 ${wheel_steering_offset} 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_fr.dae" />
             </geometry>
@@ -79,7 +88,7 @@
     </link>
 
     <joint name="front_right_wheel" type="continuous">
-        <origin xyz="0 0.06 0" rpy="0 0 0" />
+        <origin xyz="0 ${wheel_steering_offset} 0" rpy="0 0 0" />
         <parent link="front_right_hub_link"/>
         <child link="front_right_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
@@ -107,11 +116,11 @@
 
     <!-- front left wheel -->
     <joint name="front_left_steering" type="revolute">
-        <origin xyz="-${wheelbase/2} -${track/2-0.06} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="-${wheelbase/2} -${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="front_left_hub_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
-        <limit lower="-1.57" upper="1.57" effort="20" velocity="0.8" />
+        <limit lower="-0.785" upper="0.785" effort="20" velocity="0.8" />
     </joint>
 
     <link name="front_left_hub_link">
@@ -121,7 +130,7 @@
             <inertia ixx="0.7171" ixy="0" ixz="0" iyy="0.1361" iyz="0" izz="0.7171" />
         </inertial>
         <visual>
-            <origin xyz="0 -0.06 0" rpy="0 0 0" />
+            <origin xyz="0 -${wheel_steering_offset} 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_fl.dae" />
             </geometry>
@@ -129,7 +138,7 @@
     </link>
 
     <joint name="front_left_wheel" type="continuous">
-        <origin xyz="0 -0.06 0" rpy="0 0 0" />
+        <origin xyz="0 -${wheel_steering_offset} 0" rpy="0 0 0" />
         <parent link="front_left_hub_link"/>
         <child link="front_left_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
