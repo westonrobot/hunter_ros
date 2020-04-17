@@ -68,12 +68,12 @@
     <joint name="front_right_steering" type="revolute">
         <origin xyz="-${wheelbase/2} ${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
-        <child link="front_right_hub_link"/>
+        <child link="front_right_steer_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
         <limit lower="-0.785" upper="0.785" effort="20" velocity="0.8" />
     </joint>
 
-    <link name="front_right_hub_link">
+    <link name="front_right_steer_link">
         <inertial>
             <mass value="3" />
             <origin xyz="0 0 0" />
@@ -82,14 +82,14 @@
         <visual>
             <origin xyz="0 ${wheel_steering_offset} 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://hunter_description/meshes/hub_fr.dae" />
+                <mesh filename="package://hunter_description/meshes/steer_conn_fr.dae" />
             </geometry>
         </visual>
     </link>
 
     <joint name="front_right_wheel" type="continuous">
         <origin xyz="0 ${wheel_steering_offset} 0" rpy="0 0 0" />
-        <parent link="front_right_hub_link"/>
+        <parent link="front_right_steer_link"/>
         <child link="front_right_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
     </joint>
@@ -106,6 +106,12 @@
                 <mesh filename="package://hunter_description/meshes/wheel_fr.dae" />
             </geometry>
         </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
+            </geometry>
+        </visual>
         <collision>
             <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
             <geometry>
@@ -118,12 +124,12 @@
     <joint name="front_left_steering" type="revolute">
         <origin xyz="-${wheelbase/2} -${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
-        <child link="front_left_hub_link"/>
+        <child link="front_left_steer_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
         <limit lower="-0.785" upper="0.785" effort="20" velocity="0.8" />
     </joint>
 
-    <link name="front_left_hub_link">
+    <link name="front_left_steer_link">
         <inertial>
             <mass value="3" />
             <origin xyz="0 0 0" />
@@ -132,14 +138,14 @@
         <visual>
             <origin xyz="0 -${wheel_steering_offset} 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://hunter_description/meshes/hub_fl.dae" />
+                <mesh filename="package://hunter_description/meshes/steer_conn_fl.dae" />
             </geometry>
         </visual>
     </link>
 
     <joint name="front_left_wheel" type="continuous">
         <origin xyz="0 -${wheel_steering_offset} 0" rpy="0 0 0" />
-        <parent link="front_left_hub_link"/>
+        <parent link="front_left_steer_link"/>
         <child link="front_left_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
     </joint>
@@ -154,6 +160,12 @@
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/wheel_fl.dae" />
+            </geometry>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 3.14" />
+            <geometry>
+                <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
         </visual>
         <collision>
@@ -175,6 +187,12 @@
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/wheel_rl.dae" />
+            </geometry>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 3.14" />
+            <geometry>
+                <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
         </visual>
         <collision>
@@ -203,6 +221,12 @@
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/wheel_rr.dae" />
+            </geometry>
+        </visual>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
         </visual>
         <collision>
