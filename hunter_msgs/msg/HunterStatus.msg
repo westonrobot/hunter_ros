@@ -6,7 +6,7 @@ int8 MOTOR_ID_REAR_RIGHT = 2
 
 # motion state
 float64 linear_velocity
-float64 angular_velocity
+float64 steering_angle
 
 # base state
 uint8 base_state

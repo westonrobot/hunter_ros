@@ -69,7 +69,7 @@ void HunterROSMessenger::PublishStateToROS() {
   status_msg.header.stamp = current_time_;
 
   status_msg.linear_velocity = state.linear_velocity;
-  status_msg.angular_velocity = state.angular_velocity;
+  status_msg.steering_angle = state.steering_angle;
 
   status_msg.base_state = state.base_state;
   status_msg.control_mode = state.control_mode;
@@ -85,7 +85,7 @@ void HunterROSMessenger::PublishStateToROS() {
   status_publisher_.publish(status_msg);
 
   // publish odometry and tf
-  PublishOdometryToROS(state.linear_velocity, state.angular_velocity, dt);
+  PublishOdometryToROS(state.linear_velocity, state.steering_angle, dt);
 
   // record time for next integration
   last_time_ = current_time_;
@@ -101,7 +101,7 @@ void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   status_msg.header.stamp = current_time_;
 
   status_msg.linear_velocity = linear;
-  status_msg.angular_velocity = angular;
+  status_msg.steering_angle = angular;
 
   status_msg.base_state = 0x00;
   status_msg.control_mode = 0x01;
