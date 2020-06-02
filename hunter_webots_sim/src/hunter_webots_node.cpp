@@ -29,7 +29,7 @@ static std::vector<std::string> controllerList;
 
 void quit(int sig)
 {
-    ROS_INFO("User stopped the 'agilex_scout' node.");
+    ROS_INFO("User stopped the 'agilex_hunter' node.");
     timeStepSrv.request.value = 0;
     timeStepClient.call(timeStepSrv);
     ros::shutdown();

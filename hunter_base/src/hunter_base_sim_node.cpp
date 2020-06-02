@@ -5,20 +5,20 @@
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
 
-#include "scout_sdk/scout_base.hpp"
-#include "scout_base/scout_messenger.hpp"
+#include "hunter_sdk/hunter_base.hpp"
+#include "hunter_base/hunter_messenger.hpp"
 
 using namespace wescore;
 
 int main(int argc, char **argv)
 {
     // setup ROS node
-    ros::init(argc, argv, "scout_odom");
+    ros::init(argc, argv, "hunter_odom");
     ros::NodeHandle node(""), private_node("~");
 
     // instantiate a robot object
-    ScoutBase robot;
-    ScoutROSMessenger messenger(&robot, &node);
+    hunterBase robot;
+    hunterROSMessenger messenger(&robot, &node);
 
     // fetch parameters before connecting to robot
     std::string port_name;

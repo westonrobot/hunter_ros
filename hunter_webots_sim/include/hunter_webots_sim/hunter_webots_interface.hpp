@@ -33,7 +33,7 @@ private:
     HunterROSMessenger* messenger_;
     uint32_t time_step_;
 
-    std::string robot_name_ = "agilex_scout";
+    std::string robot_name_ = "agilex_hunter";
     const std::vector<std::string> motor_names_{"motor_fr", "motor_fl", "motor_rl", "motor_rr"};
 };
 } // namespace wescore

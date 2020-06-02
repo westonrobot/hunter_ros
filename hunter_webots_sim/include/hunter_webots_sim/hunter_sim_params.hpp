@@ -1,5 +1,5 @@
 /* 
- * scout_sim_params.hpp
+ * hunter_sim_params.hpp
  * 
  * Created on: Sep 27, 2019 15:08
  * Description: 
@@ -14,9 +14,9 @@
 
 namespace wescore
 {
-struct ScoutSimParams
+struct HunterSimParams
 {
-    /* Scout Parameters */
+    /* hunter Parameters */
     static constexpr double max_steer_angle = 30.0; // in degree
 
     static constexpr double track = 0.576;        // in meter (left & right wheel distance)

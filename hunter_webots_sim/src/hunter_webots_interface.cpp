@@ -63,8 +63,8 @@ void HunterWebotsInterface::InitComponents(std::string controller_name)
 void HunterWebotsInterface::UpdateSimState()
 {
     // constants for calculation
-    constexpr double rotation_radius = std::hypot(ScoutSimParams::wheelbase / 2.0, ScoutSimParams::track / 2.0) * 2.0;
-    constexpr double rotation_theta = std::atan2(ScoutSimParams::wheelbase, ScoutSimParams::track);
+    constexpr double rotation_radius = std::hypot(HunterSimParams::wheelbase / 2.0, HunterSimParams::track / 2.0) * 2.0;
+    constexpr double rotation_theta = std::atan2(HunterSimParams::wheelbase, HunterSimParams::track);
 
     // update robot state
     double wheel_speeds[4];
@@ -82,8 +82,8 @@ void HunterWebotsInterface::UpdateSimState()
         else
             ROS_ERROR("Failed to call service set_velocity on motor %s.", motor_names_[i].c_str());
     }
-    float left_speed = (wheel_speeds[1] + wheel_speeds[2]) / 2.0 * ScoutSimParams::wheel_radius;
-    float right_speed = (wheel_speeds[0] + wheel_speeds[3]) / 2.0 * ScoutSimParams::wheel_radius;
+    float left_speed = (wheel_speeds[1] + wheel_speeds[2]) / 2.0 * HunterSimParams::wheel_radius;
+    float right_speed = (wheel_speeds[0] + wheel_speeds[3]) / 2.0 * HunterSimParams::wheel_radius;
     double linear_speed = (right_speed + left_speed) / 2.0;
     double angular_speed = (right_speed - left_speed) * std::cos(rotation_theta) / rotation_radius;
 
@@ -93,18 +93,18 @@ void HunterWebotsInterface::UpdateSimState()
     double linear, angular;
     messenger_->GetCurrentMotionCmdForSim(linear, angular);
 
-    if (linear > ScoutSimParams::max_linear_speed)
-        linear = ScoutSimParams::max_linear_speed;
-    if (linear < -ScoutSimParams::max_linear_speed)
-        linear = -ScoutSimParams::max_linear_speed;
+    if (linear > HunterSimParams::max_linear_speed)
+        linear = HunterSimParams::max_linear_speed;
+    if (linear < -HunterSimParams::max_linear_speed)
+        linear = -HunterSimParams::max_linear_speed;
 
-    if (angular > ScoutSimParams::max_angular_speed)
-        angular = ScoutSimParams::max_angular_speed;
-    if (angular < -ScoutSimParams::max_angular_speed)
-        angular = -ScoutSimParams::max_angular_speed;
+    if (angular > HunterSimParams::max_angular_speed)
+        angular = HunterSimParams::max_angular_speed;
+    if (angular < -HunterSimParams::max_angular_speed)
+        angular = -HunterSimParams::max_angular_speed;
 
-    double vel_left_cmd = (linear - angular * rotation_radius / std::cos(rotation_theta)) / ScoutSimParams::wheel_radius;
-    double vel_right_cmd = (linear + angular * rotation_radius / std::cos(rotation_theta)) / ScoutSimParams::wheel_radius;
+    double vel_left_cmd = (linear - angular * rotation_radius / std::cos(rotation_theta)) / HunterSimParams::wheel_radius;
+    double vel_right_cmd = (linear + angular * rotation_radius / std::cos(rotation_theta)) / HunterSimParams::wheel_radius;
 
     double wheel_cmds[4];
     wheel_cmds[0] = vel_right_cmd;

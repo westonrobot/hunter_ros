@@ -132,7 +132,7 @@ include_directories(
 
 ## Declare a C++ library
 # set(SCOUT_WEBOTS_SRC
-#     src/scout_webots_interface.cpp
+#     src/hunter_webots_interface.cpp
 # )
 # add_library(hunter_webots_sim STATIC ${SCOUT_WEBOTS_SRC})
 # target_link_libraries(hunter_webots_sim ${catkin_LIBRARIES})

@@ -22,7 +22,6 @@
 #include "ascent/Utility.h"
 #include "hunter_base/bicycle_model.hpp"
 #include "hunter_base/hunter_base.hpp"
-#include "scout_msgs/ScoutLightCmd.h"
 // #include "hunter_base/system_propagator.hpp"
 
 namespace wescore {
