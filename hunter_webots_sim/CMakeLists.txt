@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   rospy
-  scout_base
+  hunter_base
   sensor_msgs
   std_msgs
   message_generation 
@@ -115,7 +115,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES hunter_webots_sim
- CATKIN_DEPENDS geometry_msgs roscpp rospy scout_base sensor_msgs std_msgs message_runtime tf webots_ros pcl_ros
+ CATKIN_DEPENDS geometry_msgs roscpp rospy hunter_base sensor_msgs std_msgs message_runtime tf webots_ros pcl_ros
 #  DEPENDS system_lib
 )
 
