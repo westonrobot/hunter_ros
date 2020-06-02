@@ -3,10 +3,9 @@
 ## Packages
 
 * scout_bringup: launch and configuration files to start ROS nodes 
-* scout_base: a ROS wrapper around Scout SDK to monitor and control the robot
-* scout_sdk: Scout SDK customized for ROS
-* scout_msgs: scout related message definitions
-* (scout_ros: meta package for the Scout robot ROS packages)
+* hunter_base: a ROS wrapper around Hunter SDK to monitor and control the robot
+* hunter_msgs: scout related message definitions
+* (hunter_ros: meta package for the Scout robot ROS packages)
 
 The following diagram may help you to understand how the components are inter-connected with each other:
 
@@ -69,6 +68,7 @@ Two scripts inside the "scout_bringup/scripts" folder are provided for easy setu
 
     ```
     $ cd ~/catkin_ws/src
+    $ git clone -b catkin https://github.com/westonrobot/wrp_sdk.git
     $ git clone https://github.com/westonrobot/hunter_ros.git
     $ cd ..
     $ catkin_make
@@ -89,6 +89,8 @@ Two scripts inside the "scout_bringup/scripts" folder are provided for easy setu
     ```
     export WEBOTS_HOME=/usr/local/webots
     ```
+
+    Adjust the path accordingly if you install Webots to a different place.
 
 4. Launch ROS nodes
  
