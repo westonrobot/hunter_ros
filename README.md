@@ -60,6 +60,7 @@ Two scripts inside the "scout_bringup/scripts" folder are provided for easy setu
     $ sudo apt install ros-$ROS_DISTRO-teleop-twist-keyboard
     $ sudo apt-get install ros-$ROS_DISTRO-joint-state-publisher-gui
     $ sudo apt install ros-$ROS_DISTRO-ros-controllers
+    $ sudo apt install ros-$ROS_DISTRO-webots-ros
     ```
 
 2. Clone the packages into your catkin workspace and compile
@@ -77,12 +78,6 @@ Two scripts inside the "scout_bringup/scripts" folder are provided for easy setu
 3. Setup Webots simulation    
 
 * Install Webots R2020a-rev1 (download from https://cyberbotics.com/ )
-
-* Install Webots ROS package
-
-    ```
-    $ sudo apt install ros-$ROS_DISTRO-webots-ros
-    ```
 
 * Set WEBOTS_HOME variable, add the following line to your "~/.bashrc"
 

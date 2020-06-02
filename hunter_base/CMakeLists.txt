@@ -110,8 +110,8 @@ add_subdirectory(ascent)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES hunter_base
+ INCLUDE_DIRS include
+ LIBRARIES hunter_messenger
 #  CATKIN_DEPENDS hunter_msgs roscpp sensor_msgs std_msgs tf2 tf2_ros wrp_sdk
 #  DEPENDS system_lib
 )

@@ -1,7 +1,7 @@
 /* 
- * scout_webots_node.cpp
+ * hunter_webots_node.cpp
  * 
- * Created on: Sep 26, 2019 23:03
+ * Created on: Jun 02, 2020 12:53
  * Description: 
  * 
  * Copyright (c) 2019 Ruixiang Du (rdu)
@@ -17,7 +17,7 @@
 #include <webots_ros/set_float.h>
 #include <webots_ros/set_int.h>
 
-#include "scout_webots_sim/scout_webots_interface.hpp"
+#include "hunter_webots_sim/hunter_webots_interface.hpp"
 
 using namespace wescore;
 
@@ -46,10 +46,10 @@ void controllerNameCallback(const std_msgs::String::ConstPtr &name)
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "scout_webots_node", ros::init_options::AnonymousName);
+    ros::init(argc, argv, "hunter_webots_node", ros::init_options::AnonymousName);
     ros::NodeHandle nh, private_node("~");
 
-    ScoutROSMessenger messenger(&nh);
+    HunterROSMessenger messenger(&nh);
     private_node.param<std::string>("odom_frame", messenger.odom_frame_, std::string("odom"));
     private_node.param<std::string>("base_frame", messenger.base_frame_, std::string("base_link"));
     private_node.param<int>("sim_control_rate", messenger.sim_control_rate_, 50);
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     messenger.SetupSubscription();
 
     const uint32_t time_step = 1000 / messenger.sim_control_rate_;
-    ScoutWebotsInterface scout_webots(&nh, &messenger, time_step);
+    HunterWebotsInterface hunter_webots(&nh, &messenger, time_step);
 
     signal(SIGINT, quit);
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     nameSub.shutdown();
 
     // init robot components
-    scout_webots.InitComponents(controllerName);
+    hunter_webots.InitComponents(controllerName);
 
     ROS_INFO("Entering ROS main loop...");
 
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
             ROS_ERROR("Failed to call service time_step for next step.");
             break;
         }
-        scout_webots.UpdateSimState();
+        hunter_webots.UpdateSimState();
         ros::spinOnce();
     }
     timeStepSrv.request.value = 0;

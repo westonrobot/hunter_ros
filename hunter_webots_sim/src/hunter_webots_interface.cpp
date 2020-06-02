@@ -1,13 +1,13 @@
 /* 
- * scout_webots_interface.cpp
+ * hunter_webots_interface.cpp
  * 
- * Created on: Sep 26, 2019 23:19
+ * Created on: Jun 02, 2020 12:51
  * Description: 
  * 
  * Copyright (c) 2019 Ruixiang Du (rdu)
- */
+ */ 
 
-#include "scout_webots_sim/scout_webots_interface.hpp"
+#include "hunter_webots_sim/hunter_webots_interface.hpp"
 
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
@@ -18,16 +18,16 @@
 #include <webots_ros/set_int.h>
 #include <webots_ros/set_bool.h>
 
-#include "scout_webots_sim/scout_sim_params.hpp"
+#include "hunter_webots_sim/hunter_sim_params.hpp"
 
 namespace wescore
 {
-ScoutWebotsInterface::ScoutWebotsInterface(ros::NodeHandle *nh, ScoutROSMessenger *msger, uint32_t time_step)
+HunterWebotsInterface::HunterWebotsInterface(ros::NodeHandle *nh, HunterROSMessenger *msger, uint32_t time_step)
     : nh_(nh), messenger_(msger), time_step_(time_step)
 {
 }
 
-void ScoutWebotsInterface::InitComponents(std::string controller_name)
+void HunterWebotsInterface::InitComponents(std::string controller_name)
 {
     // reset controller name
     robot_name_ = controller_name;
@@ -60,7 +60,7 @@ void ScoutWebotsInterface::InitComponents(std::string controller_name)
     }
 }
 
-void ScoutWebotsInterface::UpdateSimState()
+void HunterWebotsInterface::UpdateSimState()
 {
     // constants for calculation
     constexpr double rotation_radius = std::hypot(ScoutSimParams::wheelbase / 2.0, ScoutSimParams::track / 2.0) * 2.0;
