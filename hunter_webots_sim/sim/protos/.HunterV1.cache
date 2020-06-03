@@ -1,0 +1,11 @@
+Webots Proto Cache File version 1.4
+protoFileHash: 2b16347443509aa6430311bc0d5d3f9a
+containsDevices: 1
+baseType: Robot
+slotType: 
+parameters: translation,rotation,controller,extensionSlot
+tags: 
+license:  Apache License 2.0
+licenseUrl:  http://www.apache.org/licenses/LICENSE-2.0
+documentationUrl: 
+info: This\sis\sa\sproto\sfile\sfor\sWebots\sfor\sthe\sHunterV1\nExtracted\sfrom:\shunter_v1.urdf\n
