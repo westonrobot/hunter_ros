@@ -1,0 +1,13 @@
+{
+    "folders": [{
+        "uri": "sftp://hunter:@westonrobot.com@10.6.8.10:/home/hunter/Workspace/catkin_ws",
+        "name": "jetson-xavier-remote"
+    }
+],
+"settings": {
+    "python.autoComplete.extraPaths": [
+        "/home/rdu/Workspace/catkin_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ]
+}
+}
