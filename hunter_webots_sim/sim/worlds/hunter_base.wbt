@@ -1,5 +1,6 @@
 #VRML_SIM R2020a utf8
 WorldInfo {
+  basicTimeStep 20
 }
 Viewpoint {
   orientation 0.06874804880609674 -0.9850894640626844 -0.15771003004897316 3.952800343209612
@@ -12,4 +13,5 @@ TexturedBackgroundLight {
 Floor {
 }
 HunterV1 {
+  controller "ros"
 }

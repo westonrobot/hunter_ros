@@ -10,11 +10,11 @@
 #ifndef HUNTER_WEBOTS_INTERFACE_HPP
 #define HUNTER_WEBOTS_INTERFACE_HPP
 
-#include <string>
-
 #include <ros/ros.h>
-#include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/Imu.h>
+#include <sensor_msgs/PointCloud.h>
+
+#include <string>
 
 #include "hunter_base/hunter_messenger.hpp"
 
@@ -32,9 +32,10 @@ class HunterWebotsInterface {
   HunterROSMessenger* messenger_;
   uint32_t time_step_;
 
-  std::string robot_name_ = "agilex_hunter";
-  const std::vector<std::string> motor_names_{"motor_fr", "motor_fl",
-                                              "motor_rl", "motor_rr"};
+  std::string robot_name_ = "hunter_v1";
+  const std::vector<std::string> motor_names_{
+      "front_right_steering", "front_left_steering", "rear_left_wheel",
+      "rear_right_wheel"};
 };
 }  // namespace wescore
 

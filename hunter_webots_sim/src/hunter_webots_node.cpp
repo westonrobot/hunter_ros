@@ -7,15 +7,13 @@
  * Copyright (c) 2019 Ruixiang Du (rdu)
  */
 
-#include <signal.h>
-
-#include <iostream>
-
 #include <ros/ros.h>
+#include <signal.h>
 #include <std_msgs/String.h>
-
 #include <webots_ros/set_float.h>
 #include <webots_ros/set_int.h>
+
+#include <iostream>
 
 #include "hunter_webots_sim/hunter_webots_interface.hpp"
 
@@ -28,7 +26,7 @@ static int controllerCount;
 static std::vector<std::string> controllerList;
 
 void quit(int sig) {
-  ROS_INFO("User stopped the 'agilex_hunter' node.");
+  ROS_INFO("User stopped the 'hunter_webots_node'.");
   timeStepSrv.request.value = 0;
   timeStepClient.call(timeStepSrv);
   ros::shutdown();
@@ -58,6 +56,7 @@ int main(int argc, char *argv[]) {
 
   const uint32_t time_step = 1000 / messenger.sim_control_rate_;
   HunterWebotsInterface hunter_webots(&nh, &messenger, time_step);
+  ROS_INFO("Chosen time step: '%d'", time_step);
 
   signal(SIGINT, quit);
 
@@ -97,16 +96,17 @@ int main(int argc, char *argv[]) {
   ROS_INFO("Entering ROS main loop...");
 
   // main loop
-  timeStepClient = nh.serviceClient<webots_ros::set_int>(controllerName +
+  timeStepClient = nh.serviceClient<webots_ros::set_int>("/" + controllerName +
                                                          "/robot/time_step");
   timeStepSrv.request.value = time_step;
   while (ros::ok()) {
-    if (!timeStepClient.call(timeStepSrv) || !timeStepSrv.response.success) {
+    if (timeStepClient.call(timeStepSrv) && timeStepSrv.response.success) {
+      hunter_webots.UpdateSimState();
+      ros::spinOnce();
+    } else {
       ROS_ERROR("Failed to call service time_step for next step.");
       break;
     }
-    hunter_webots.UpdateSimState();
-    ros::spinOnce();
   }
   timeStepSrv.request.value = 0;
   timeStepClient.call(timeStepSrv);
