@@ -49,11 +49,11 @@
                 <box size="0.56 0.38 0.22"/>
             </geometry>
         </collision>
-        <inertial>
+        <!-- <inertial>
             <mass value="40" />
             <origin xyz="0.0 0.0 0.0" />
             <inertia ixx="2.288641" ixy="0" ixz="0" iyy="5.103976" iyz="0" izz="3.431465" />
-        </inertial>
+        </inertial> -->
     </link>
 
     <link name="base_footprint"/>
@@ -62,6 +62,23 @@
         <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
         <parent link="base_link" />
         <child link="base_footprint" />
+    </joint>
+
+    <link name="inertial_link">
+        <inertial>
+            <mass value="40" />
+            <!-- <mass value="50" /> -->
+            <!-- <origin xyz="-0.00065 -0.085 0.062" />
+            <inertia ixx="0.6022" ixy="-0.02364" ixz="-0.1197" iyy="1.7386" iyz="-0.001544" izz="2.0296" /> -->
+            <origin xyz="0.0 0.0 0.0" />
+            <inertia ixx="2.288641" ixy="0" ixz="0" iyy="5.103976" iyz="0" izz="3.431465" />
+        </inertial>
+    </link>
+
+    <joint name="inertial_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="inertial_link" />
     </joint>
 
     <!-- front right wheel -->
@@ -106,12 +123,12 @@
                 <mesh filename="package://hunter_description/meshes/wheel_fr.dae" />
             </geometry>
         </visual>
-        <visual>
+        <!-- <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
-        </visual>
+        </visual> -->
         <collision>
             <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
             <geometry>
@@ -162,12 +179,12 @@
                 <mesh filename="package://hunter_description/meshes/wheel_fl.dae" />
             </geometry>
         </visual>
-        <visual>
+        <!-- <visual>
             <origin xyz="0 0 0" rpy="0 0 3.14" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
-        </visual>
+        </visual> -->
         <collision>
             <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
             <geometry>
@@ -189,12 +206,12 @@
                 <mesh filename="package://hunter_description/meshes/wheel_rl.dae" />
             </geometry>
         </visual>
-        <visual>
+        <!-- <visual>
             <origin xyz="0 0 0" rpy="0 0 3.14" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
-        </visual>
+        </visual> -->
         <collision>
             <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
             <geometry>
@@ -223,12 +240,12 @@
                 <mesh filename="package://hunter_description/meshes/wheel_rr.dae" />
             </geometry>
         </visual>
-        <visual>
+        <!-- <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/hub_shape.stl" />
             </geometry>
-        </visual>
+        </visual> -->
         <collision>
             <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
             <geometry>
