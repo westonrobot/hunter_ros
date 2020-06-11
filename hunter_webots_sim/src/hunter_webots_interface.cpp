@@ -110,6 +110,21 @@ void HunterWebotsInterface::UpdateSimState() {
 
   // update robot state
   double wheel_speeds[4];
+  for (int i = 0; i < 2; ++i) {
+    webots_ros::get_float get_position_srv;
+    ros::ServiceClient get_position_client =
+        nh_->serviceClient<webots_ros::get_float>(
+            robot_name_ + "/" + std::string(motor_names_[i]) +
+            std::string("/get_target_position"));
+
+    if (get_position_client.call(get_position_srv)) {
+      wheel_speeds[i] = get_position_srv.response.value;
+      //   ROS_INFO("Position set to %s for motor %d.", motor_names_[i].c_str(),
+      //   i);
+    } else
+      ROS_ERROR("Failed to call service get_position on motor %s.",
+                motor_names_[i].c_str());
+  }
   for (int i = 2; i < 4; ++i) {
     webots_ros::get_float get_velocity_srv;
     ros::ServiceClient get_velocity_client =
@@ -119,18 +134,16 @@ void HunterWebotsInterface::UpdateSimState() {
 
     if (get_velocity_client.call(get_velocity_srv)) {
       wheel_speeds[i] = get_velocity_srv.response.value;
-      ROS_INFO("Velocity set to 0.0 for motor %s.", motor_names_[i].c_str());
+      //   ROS_INFO("Velocity set to 0.0 for motor %s.",
+      //   motor_names_[i].c_str());
     } else
       ROS_ERROR("Failed to call service set_velocity on motor %s.",
                 motor_names_[i].c_str());
   }
-  float left_speed =
-      (wheel_speeds[1] + wheel_speeds[2]) / 2.0 * HunterSimParams::wheel_radius;
-  float right_speed =
-      (wheel_speeds[0] + wheel_speeds[3]) / 2.0 * HunterSimParams::wheel_radius;
-  double linear_speed = (right_speed + left_speed) / 2.0;
-  double angular_speed =
-      (right_speed - left_speed) * std::cos(rotation_theta) / rotation_radius;
+
+  double linear_speed =
+      (wheel_speeds[2] + wheel_speeds[3]) / 2.0 * HunterSimParams::wheel_radius;
+  double angular_speed = (wheel_speeds[0] + wheel_speeds[1]) / 2.0;
 
   messenger_->PublishSimStateToROS(linear_speed, angular_speed);
 
@@ -148,38 +161,38 @@ void HunterWebotsInterface::UpdateSimState() {
   if (angular < -HunterSimParams::max_steer_angle)
     angular = -HunterSimParams::max_steer_angle;
 
-  //   double vel_left_cmd =
-  //       (linear - angular * rotation_radius / std::cos(rotation_theta)) /
-  //       HunterSimParams::wheel_radius;
-  //   double vel_right_cmd =
-  //       (linear + angular * rotation_radius / std::cos(rotation_theta)) /
-  //       HunterSimParams::wheel_radius;
-
-  //   double wheel_cmds[4];
-  //   wheel_cmds[0] = vel_right_cmd;
-  //   wheel_cmds[1] = vel_left_cmd;
-  //   wheel_cmds[2] = vel_left_cmd;
-  //   wheel_cmds[3] = vel_right_cmd;
-  //   for (int i = 0; i < 4; ++i) {
-  //     ros::ServiceClient set_velocity_client;
-  //     webots_ros::set_float set_velocity_srv;
-  //     set_velocity_client = nh_->serviceClient<webots_ros::set_float>(
-  //         robot_name_ + "/" + std::string(motor_names_[i]) +
-  //         std::string("/set_velocity"));
-
-  //     set_velocity_srv.request.value = wheel_cmds[i];
-  //     if (set_velocity_client.call(set_velocity_srv) &&
-  //         set_velocity_srv.response.success == 1)
-  //       ROS_INFO("Velocity set to 0.0 for motor %s.",
-  //       motor_names_[i].c_str());
-  //     else
-  //       ROS_ERROR("Failed to call service set_velocity on motor %s.",
-  //                 motor_names_[i].c_str());
-  //   }
-
   double wheel_cmds[4];
-  wheel_cmds[0] = angular;
-  wheel_cmds[1] = angular;
+  double l = HunterSimParams::wheelbase;
+  double w = HunterSimParams::track;
+  double theta = std::abs(angular);
+  // steering wheel angle calculation according to Ackermann constraint
+  if (angular > 0) {
+    // left turn
+    wheel_cmds[0] = std::atan((2 * l * std::sin(theta)) /
+                              (2 * l * std::cos(theta) + w * std::sin(theta)));
+    wheel_cmds[1] = std::atan((2 * l * std::sin(theta)) /
+                              (2 * l * std::cos(theta) - w * std::sin(theta)));
+
+  } else if (angular < 0) {
+    // right turn
+    wheel_cmds[0] = -(-std::atan2(2 * l * std::cos(theta) - w * std::sin(theta),
+                                  2 * l * std::sin(theta)) +
+                      M_PI / 2.0);
+    wheel_cmds[1] = -(-std::atan2(2 * l * std::cos(theta) + w * std::sin(theta),
+                                  2 * l * std::sin(theta)) +
+                      M_PI / 2.0);
+  } else {
+    wheel_cmds[0] = 0;
+    wheel_cmds[1] = 0;
+  }
+  std::cout << "angular: " << angular << " wheel0: " << wheel_cmds[0]
+            << " wheel1: " << wheel_cmds[1] << std::endl;
+
+  for (int i = 0; i < 2; ++i) {
+    if (wheel_cmds[i] > 0.785) wheel_cmds[i] = 0.785;
+    if (wheel_cmds[i] < -0.785) wheel_cmds[i] = -0.785;
+  }
+
   wheel_cmds[2] = linear;
   wheel_cmds[3] = linear;
   // set steering angle
@@ -192,12 +205,13 @@ void HunterWebotsInterface::UpdateSimState() {
 
     set_position_srv.request.value = wheel_cmds[i];
     if (set_position_client.call(set_position_srv) &&
-        set_position_srv.response.success)
-      ROS_INFO("Position set to %f for motor %s.",wheel_cmds[i],
-               motor_names_[i].c_str());
-    else
+        set_position_srv.response.success) {
+      //   ROS_INFO("Position set to %f for motor %s.", wheel_cmds[i],
+      //            motor_names_[i].c_str());
+    } else {
       ROS_ERROR("Failed to call service set_position on motor %s.",
                 motor_names_[i].c_str());
+    }
   }
   // set driving velocity
   for (int i = 2; i < 4; ++i) {
@@ -209,11 +223,13 @@ void HunterWebotsInterface::UpdateSimState() {
 
     set_velocity_srv.request.value = wheel_cmds[i];
     if (set_velocity_client.call(set_velocity_srv) &&
-        set_velocity_srv.response.success == 1)
-      ROS_INFO("Velocity set to 0.0 for motor %s.", motor_names_[i].c_str());
-    else
+        set_velocity_srv.response.success == 1) {
+      //   ROS_INFO("Velocity set to 0.0 for motor %s.",
+      //   motor_names_[i].c_str());
+    } else {
       ROS_ERROR("Failed to call service set_velocity on motor %s.",
                 motor_names_[i].c_str());
+    }
   }
 }
 

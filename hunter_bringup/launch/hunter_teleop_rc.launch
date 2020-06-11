@@ -1,0 +1,3 @@
+<launch>
+    <include file="$(find rc_ctrl)/launch/hunter_rc_ctrl.launch" />
+</launch>

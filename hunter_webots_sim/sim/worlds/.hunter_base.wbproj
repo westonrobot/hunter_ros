@@ -7,4 +7,4 @@ centralWidgetVisible: 1
 selectionDisabled: 0
 viewpointLocked: 0
 orthographicViewHeight: 1
-textFiles: 0 "controllers/hunter_base_controller/hunter_base_controller.cpp" "protos/HunterV1.proto"
+textFiles: 0 "controllers/hunter_base_controller/hunter_base_controller.cpp"
