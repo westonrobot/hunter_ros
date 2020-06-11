@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
   timeStepClient = nh.serviceClient<webots_ros::set_int>("/" + controllerName +
                                                          "/robot/time_step");
   timeStepSrv.request.value = time_step;
+  ros::Rate loop_rate(messenger.sim_control_rate_); 
   while (ros::ok()) {
     if (timeStepClient.call(timeStepSrv) && timeStepSrv.response.success) {
       hunter_webots.UpdateSimState();
@@ -107,6 +108,7 @@ int main(int argc, char *argv[]) {
       ROS_ERROR("Failed to call service time_step for next step.");
       break;
     }
+    loop_rate.sleep();
   }
   timeStepSrv.request.value = 0;
   timeStepClient.call(timeStepSrv);
