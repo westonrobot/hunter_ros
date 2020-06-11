@@ -93,13 +93,22 @@ void HunterROSMessenger::PublishStateToROS() {
 
 void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   current_time_ = ros::Time::now();
-  double dt = 1.0 / sim_control_rate_;
+  //   double dt = 1.0 / sim_control_rate_;
+  double dt = (current_time_ - last_time_).toSec();
+
+  static bool init_run = true;
+  if (init_run) {
+    last_time_ = current_time_;
+    init_run = false;
+    return;
+  }
 
   // publish hunter state message
   hunter_msgs::HunterStatus status_msg;
 
   status_msg.header.stamp = current_time_;
 
+  // TODO should receive update from simulator
   status_msg.linear_velocity = linear;
   status_msg.steering_angle = angular;
 
@@ -108,18 +117,19 @@ void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   status_msg.fault_code = 0x00;
   status_msg.battery_voltage = 29.5;
 
-  // for (int i = 0; i < 3; ++i)
-  // {
-  //     status_msg.motor_states[i].current = state.motor_states[i].current;
-  //     status_msg.motor_states[i].rpm = state.motor_states[i].rpm;
-  //     status_msg.motor_states[i].temperature =
-  //     state.motor_states[i].temperature;
-  // }
+  for (int i = 0; i < 3; ++i) {
+    status_msg.motor_states[i].current = 0;
+    status_msg.motor_states[i].rpm = 0;
+    status_msg.motor_states[i].temperature = 0;
+  }
 
   status_publisher_.publish(status_msg);
 
   // publish odometry and tf
   PublishOdometryToROS(linear, angular, dt);
+
+  // record time for next integration
+  last_time_ = current_time_;
 }
 
 void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
