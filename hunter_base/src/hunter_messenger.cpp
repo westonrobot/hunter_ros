@@ -9,12 +9,13 @@
 
 #include "hunter_base/hunter_messenger.hpp"
 
-#include <cmath>
 #include <tf/transform_broadcaster.h>
 
+#include <cmath>
+
 #include "hunter_base/hunter_messenger.hpp"
-#include "hunter_msgs/HunterStatus.h"
 #include "hunter_base/hunter_params.hpp"
+#include "hunter_msgs/HunterStatus.h"
 
 namespace wescore {
 HunterROSMessenger::HunterROSMessenger(ros::NodeHandle *nh)
@@ -88,20 +89,19 @@ void HunterROSMessenger::PublishStateToROS() {
 
   // state.steering_angle = phi_i
   // convert phi_i to phi (as defined in kinematic model)
-  static constexpr double steer_angle_tolerance = 0.005; // ~+-0.287 degrees
+  static constexpr double steer_angle_tolerance = 0.005;  // ~+-0.287 degrees
   double phi = 0;
   double phi_i = state.steering_angle;
   double l = HunterParams::wheelbase;
   double w = HunterParams::track;
-  if(phi_i > steer_angle_tolerance) {
+  if (phi_i > steer_angle_tolerance) {
     // left turn
     double r = l / std::tan(phi_i) + w / 2;
-    phi = std::atan(l/r);
-  }
-  else if(phi_i < -steer_angle_tolerance) {
-    // right turn      
+    phi = std::atan(l / r);
+  } else if (phi_i < -steer_angle_tolerance) {
+    // right turn
     double r = l / std::tan(-phi_i) + w / 2;
-    phi = std::atan(l/r);
+    phi = std::atan(l / r);
     phi = -phi;
   }
 
@@ -153,6 +153,13 @@ void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   last_time_ = current_time_;
 }
 
+void HunterROSMessenger::ResetOdometry()
+{
+    position_x_ = 0.0;
+    position_y_ = 0.0;
+    theta_ = 0.0;
+}
+
 void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
                                               double dt) {
   // perform numerical integration to get an estimation of pose
@@ -197,8 +204,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
 
-  std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_ 
-    << " , pose: (" << position_x_ << "," << position_y_ << "," << theta_ << ")" << std::endl;
+  std::cout << "dt: " << dt << " , linear: " << linear_speed_ << " , angular: " << steering_angle_
+            << " , pose: (" << position_x_ << "," << position_y_ << ","
+            << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }

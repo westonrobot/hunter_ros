@@ -58,6 +58,7 @@ class HunterROSMessenger {
   int sim_control_rate_ = 50;
   
   void SetupSubscription();
+  void ResetOdometry();
 
   void PublishStateToROS();
   void PublishSimStateToROS(double linear, double angular);
