@@ -15,6 +15,7 @@
 
 #include "ascent/Ascent.h"
 #include "ascent/Utility.h"
+#include "hunter_base/hunter_params.hpp"
 
 namespace wescore {
 /*
@@ -45,7 +46,7 @@ class BicycleKinematics {
 
  private:
   control_t u_ = {0.0, 0.0};
-  static constexpr double L = 0.64857;
+  static constexpr double L = HunterParams::wheelbase;
 };
 }  // namespace wescore
 

@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     // publish robot state at 50Hz while listening to twist commands
     double linear, angular;
     ros::Rate rate_50hz(50); // 50Hz
-    while (true)
+    while (ros::ok())
     {
         messenger.GetCurrentMotionCmdForSim(linear, angular);
         messenger.PublishSimStateToROS(linear, angular);

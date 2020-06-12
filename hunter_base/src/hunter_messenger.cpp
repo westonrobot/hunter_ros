@@ -9,10 +9,12 @@
 
 #include "hunter_base/hunter_messenger.hpp"
 
+#include <cmath>
 #include <tf/transform_broadcaster.h>
 
 #include "hunter_base/hunter_messenger.hpp"
 #include "hunter_msgs/HunterStatus.h"
+#include "hunter_base/hunter_params.hpp"
 
 namespace wescore {
 HunterROSMessenger::HunterROSMessenger(ros::NodeHandle *nh)
@@ -84,8 +86,27 @@ void HunterROSMessenger::PublishStateToROS() {
 
   status_publisher_.publish(status_msg);
 
+  // state.steering_angle = phi_i
+  // convert phi_i to phi (as defined in kinematic model)
+  static constexpr double steer_angle_tolerance = 0.005; // ~+-0.287 degrees
+  double phi = 0;
+  double phi_i = state.steering_angle;
+  double l = HunterParams::wheelbase;
+  double w = HunterParams::track;
+  if(phi_i > steer_angle_tolerance) {
+    // left turn
+    double r = l / std::tan(phi_i) + w / 2;
+    phi = std::atan(l/r);
+  }
+  else if(phi_i < -steer_angle_tolerance) {
+    // right turn      
+    double r = l / std::tan(-phi_i) + w / 2;
+    phi = std::atan(l/r);
+    phi = -phi;
+  }
+
   // publish odometry and tf
-  PublishOdometryToROS(state.linear_velocity, state.steering_angle, dt);
+  PublishOdometryToROS(state.linear_velocity, phi, dt);
 
   // record time for next integration
   last_time_ = current_time_;
@@ -175,6 +196,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.x = linear_speed_;
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
+
+  std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_ 
+    << " , pose: (" << position_x_ << "," << position_y_ << "," << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }
