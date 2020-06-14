@@ -20,21 +20,9 @@
     <!-- Base link -->
     <link name="base_link">
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="0 0 3.14" />
             <geometry>
                 <mesh filename="package://hunter_description/meshes/base_link.dae" />
-            </geometry>
-        </visual>
-        <visual>
-            <origin xyz="0 0 0.12" rpy="0 0 0" />
-            <geometry>
-                <box size="0.75 0.15 0.08"/>
-            </geometry>
-        </visual>
-        <visual>
-            <origin xyz="0.17 0 0.06" rpy="0 0 0" />
-            <geometry>
-                <box size="0.45 0.37 0.18"/>
             </geometry>
         </visual>
         <collision>
@@ -83,7 +71,7 @@
 
     <!-- front right wheel -->
     <joint name="front_right_steering" type="revolute">
-        <origin xyz="-${wheelbase/2} ${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="${wheelbase/2} ${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="front_right_steer_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
@@ -139,7 +127,7 @@
 
     <!-- front left wheel -->
     <joint name="front_left_steering" type="revolute">
-        <origin xyz="-${wheelbase/2} -${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="${wheelbase/2} -${track/2-wheel_steering_offset} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="front_left_steer_link"/>
         <axis xyz="0 0 1" rpy="0 0 0" />
@@ -221,7 +209,7 @@
     </link>
 
     <joint name="rear_left_wheel" type="continuous">
-        <origin xyz="${wheelbase/2} -${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="-${wheelbase/2} -${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="rear_left_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
@@ -255,7 +243,7 @@
     </link>
 
     <joint name="rear_right_wheel" type="continuous">
-        <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+        <origin xyz="-${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
         <parent link="base_link"/>
         <child link="rear_right_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />

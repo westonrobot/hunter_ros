@@ -3,6 +3,9 @@
  *
  * Created on: Jun 01, 2020 15:25
  * Description:
+ * 
+ * Test commands: 
+ * rostopic pub /cmd_vel geometry_msgs/Twist -r 3 -- '[0.5,0.0,0.0]' '[0.0, 0.0, 0.523]'
  *
  * Copyright (c) 2019 Ruixiang Du (rdu)
  */
@@ -115,14 +118,6 @@ void HunterROSMessenger::PublishStateToROS() {
 void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   current_time_ = ros::Time::now();
   double dt = 1.0 / sim_control_rate_;
-  //   double dt = (current_time_ - last_time_).toSec();
-
-//   static bool init_run = true;
-//   if (init_run) {
-//     last_time_ = current_time_;
-//     init_run = false;
-//     return;
-//   }
 
   // publish hunter state message
   hunter_msgs::HunterStatus status_msg;
@@ -148,9 +143,6 @@ void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
 
   // publish odometry and tf
   PublishOdometryToROS(linear, angular, dt);
-
-  // record time for next integration
-//   last_time_ = current_time_;
 }
 
 void HunterROSMessenger::ResetOdometry() {
