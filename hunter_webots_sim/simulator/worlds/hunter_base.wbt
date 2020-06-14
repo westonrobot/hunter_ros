@@ -13,5 +13,4 @@ TexturedBackgroundLight {
 Floor {
 }
 HunterV1 {
-  controller "ros"
 }

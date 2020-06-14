@@ -114,15 +114,15 @@ void HunterROSMessenger::PublishStateToROS() {
 
 void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   current_time_ = ros::Time::now();
-  //   double dt = 1.0 / sim_control_rate_;
-  double dt = (current_time_ - last_time_).toSec();
+  double dt = 1.0 / sim_control_rate_;
+  //   double dt = (current_time_ - last_time_).toSec();
 
-  static bool init_run = true;
-  if (init_run) {
-    last_time_ = current_time_;
-    init_run = false;
-    return;
-  }
+//   static bool init_run = true;
+//   if (init_run) {
+//     last_time_ = current_time_;
+//     init_run = false;
+//     return;
+//   }
 
   // publish hunter state message
   hunter_msgs::HunterStatus status_msg;
@@ -150,14 +150,13 @@ void HunterROSMessenger::PublishSimStateToROS(double linear, double angular) {
   PublishOdometryToROS(linear, angular, dt);
 
   // record time for next integration
-  last_time_ = current_time_;
+//   last_time_ = current_time_;
 }
 
-void HunterROSMessenger::ResetOdometry()
-{
-    position_x_ = 0.0;
-    position_y_ = 0.0;
-    theta_ = 0.0;
+void HunterROSMessenger::ResetOdometry() {
+  position_x_ = 0.0;
+  position_y_ = 0.0;
+  theta_ = 0.0;
 }
 
 void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
@@ -204,9 +203,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
 
-  std::cout << "dt: " << dt << " , linear: " << linear_speed_ << " , angular: " << steering_angle_
-            << " , pose: (" << position_x_ << "," << position_y_ << ","
-            << theta_ << ")" << std::endl;
+  std::cout << "dt: " << dt << " , linear: " << linear_speed_
+            << " , angular: " << steering_angle_ << " , pose: (" << position_x_
+            << "," << position_y_ << "," << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }

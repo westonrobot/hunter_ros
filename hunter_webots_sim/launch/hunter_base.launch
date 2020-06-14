@@ -5,7 +5,7 @@
   <include file="$(find hunter_webots_sim)/launch/webots.launch">
     <arg name="mode" value="realtime"/>
     <arg name="no-gui" value="$(arg no-gui)"/>
-    <arg name="world" value="$(find hunter_webots_sim)/sim/worlds/hunter_base.wbt"/>
+    <arg name="world" value="$(find hunter_webots_sim)/simulator/worlds/hunter_base.wbt"/>
   </include>
 
   <arg name="auto-close" default="false" doc="Startup mode"/>

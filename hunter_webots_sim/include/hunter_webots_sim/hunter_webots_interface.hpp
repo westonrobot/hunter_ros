@@ -17,6 +17,7 @@
 #include <string>
 
 #include "hunter_base/hunter_messenger.hpp"
+#include "hunter_base/hunter_params.hpp"
 
 namespace wescore {
 class HunterWebotsInterface {
@@ -31,6 +32,9 @@ class HunterWebotsInterface {
   ros::NodeHandle* nh_;
   HunterROSMessenger* messenger_;
   uint32_t time_step_;
+
+  static constexpr double l = HunterParams::wheelbase;
+  static constexpr double w = HunterParams::track;
 
   std::string robot_name_ = "hunter_v1";
   const std::vector<std::string> motor_names_{

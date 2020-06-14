@@ -20,7 +20,7 @@
 #include <webots_ros/set_float.h>
 #include <webots_ros/set_int.h>
 
-#include "hunter_webots_sim/hunter_sim_params.hpp"
+// #include "hunter_webots_sim/hunter_sim_params.hpp"
 
 namespace wescore {
 HunterWebotsInterface::HunterWebotsInterface(ros::NodeHandle *nh,
@@ -102,14 +102,13 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
 void HunterWebotsInterface::UpdateSimState() {
   // constants for calculation
   constexpr double rotation_radius =
-      std::hypot(HunterSimParams::wheelbase / 2.0,
-                 HunterSimParams::track / 2.0) *
+      std::hypot(HunterParams::wheelbase / 2.0, HunterParams::track / 2.0) *
       2.0;
   constexpr double rotation_theta =
-      std::atan2(HunterSimParams::wheelbase, HunterSimParams::track);
+      std::atan2(HunterParams::wheelbase, HunterParams::track);
 
   // update robot state
-  double wheel_speeds[4];
+  double wheel_speed_or_position[4];
   for (int i = 0; i < 2; ++i) {
     webots_ros::get_float get_position_srv;
     ros::ServiceClient get_position_client =
@@ -118,7 +117,7 @@ void HunterWebotsInterface::UpdateSimState() {
             std::string("/get_target_position"));
 
     if (get_position_client.call(get_position_srv)) {
-      wheel_speeds[i] = get_position_srv.response.value;
+      wheel_speed_or_position[i] = get_position_srv.response.value;
       //   ROS_INFO("Position set to %s for motor %d.", motor_names_[i].c_str(),
       //   i);
     } else
@@ -133,7 +132,7 @@ void HunterWebotsInterface::UpdateSimState() {
                                                   std::string("/get_velocity"));
 
     if (get_velocity_client.call(get_velocity_srv)) {
-      wheel_speeds[i] = get_velocity_srv.response.value;
+      wheel_speed_or_position[i] = get_velocity_srv.response.value;
       //   ROS_INFO("Velocity set to 0.0 for motor %s.",
       //   motor_names_[i].c_str());
     } else
@@ -142,30 +141,39 @@ void HunterWebotsInterface::UpdateSimState() {
   }
 
   double linear_speed =
-      (wheel_speeds[2] + wheel_speeds[3]) / 2.0 * HunterSimParams::wheel_radius;
-  double angular_speed = (wheel_speeds[0] + wheel_speeds[1]) / 2.0;
-
-  messenger_->PublishSimStateToROS(linear_speed, angular_speed);
+      (wheel_speed_or_position[2] + wheel_speed_or_position[3]) / 2.0 * HunterParams::wheel_radius;
+  double steering_angle;
+  if (std::abs(wheel_speed_or_position[0]) < 0.005 || std::abs(wheel_speed_or_position[1]) < 0.005) {
+    steering_angle = 0.0;
+  } else if (wheel_speed_or_position[0] > 0) {
+    // left turn (inner wheel is left wheel)
+    steering_angle =
+        std::atan(l / (l / std::tan(std::abs(wheel_speed_or_position[1])) + w / 2.0));
+  } else if (wheel_speed_or_position[0] < 0) {
+    // right turn (inner wheel is right wheel)
+    steering_angle =
+        std::atan(l / (l / std::tan(std::abs(wheel_speed_or_position[0])) + w / 2.0));
+  }
+  messenger_->PublishSimStateToROS(linear_speed, steering_angle);
 
   // send robot command
   double linear, angular;
   messenger_->GetCurrentMotionCmdForSim(linear, angular);
 
-  if (linear > HunterSimParams::max_linear_speed)
-    linear = HunterSimParams::max_linear_speed;
-  if (linear < -HunterSimParams::max_linear_speed)
-    linear = -HunterSimParams::max_linear_speed;
+  if (linear > HunterParams::max_linear_speed)
+    linear = HunterParams::max_linear_speed;
+  if (linear < -HunterParams::max_linear_speed)
+    linear = -HunterParams::max_linear_speed;
 
-  if (angular > HunterSimParams::max_steer_angle)
-    angular = HunterSimParams::max_steer_angle;
-  if (angular < -HunterSimParams::max_steer_angle)
-    angular = -HunterSimParams::max_steer_angle;
+  if (angular > HunterParams::max_steer_angle)
+    angular = HunterParams::max_steer_angle;
+  if (angular < -HunterParams::max_steer_angle)
+    angular = -HunterParams::max_steer_angle;
 
   double wheel_cmds[4];
-  double l = HunterSimParams::wheelbase;
-  double w = HunterSimParams::track;
-  double theta = std::abs(angular);
+
   // steering wheel angle calculation according to Ackermann constraint
+  double theta = std::abs(angular);
   if (angular > 0) {
     // left turn
     wheel_cmds[0] = std::atan((2 * l * std::sin(theta)) /
@@ -193,8 +201,8 @@ void HunterWebotsInterface::UpdateSimState() {
     if (wheel_cmds[i] < -0.785) wheel_cmds[i] = -0.785;
   }
 
-  wheel_cmds[2] = linear;
-  wheel_cmds[3] = linear;
+  wheel_cmds[2] = linear / HunterParams::wheel_radius;
+  wheel_cmds[3] = linear / HunterParams::wheel_radius;
   // set steering angle
   for (int i = 0; i < 2; ++i) {
     webots_ros::set_float set_position_srv;
