@@ -100,14 +100,16 @@ int main(int argc, char *argv[]) {
                                                          "/robot/time_step");
   timeStepSrv.request.value = time_step;
   ros::Rate loop_rate(messenger.sim_control_rate_); 
+//   uint32_t cnt = 0;
   while (ros::ok()) {
     if (timeStepClient.call(timeStepSrv) && timeStepSrv.response.success) {
       hunter_webots.UpdateSimState();
       ros::spinOnce();
     } else {
       ROS_ERROR("Failed to call service time_step for next step.");
-      break;
+    //   break;
     }
+    // if(++cnt == 166) break;
     loop_rate.sleep();
   }
   timeStepSrv.request.value = 0;

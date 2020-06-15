@@ -5,7 +5,7 @@
  * Description:
  * 
  * Test commands: 
- * rostopic pub /cmd_vel geometry_msgs/Twist -r 3 -- '[0.5,0.0,0.0]' '[0.0, 0.0, 0.478]'
+ * rostopic pub /cmd_vel geometry_msgs/Twist -r 3 -- '[0.5,0.0,0.0]' '[0.0, 0.0, 0.3872]'
  * 
  * rostopic pub /reset_odom_integrator std_msgs/Bool true
  *
@@ -87,11 +87,11 @@ double HunterROSMessenger::ConvertCentralAngleToInner(double angle) {
     double phi_i = 0;
     if (phi > steer_angle_tolerance) {
         // left turn
-        phi_i = atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
+        phi_i = std::atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
     } else if (phi < -steer_angle_tolerance) {
         // right turn
         phi = -phi;
-        phi_i = atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
+        phi_i = std::atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
         phi_i = -phi_i;
     }
     return phi_i;
@@ -222,9 +222,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
 
-//   std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_
-//             << " , pose: (" << position_x_ << "," << position_y_ << ","
-//             << theta_ << ")" << std::endl;
+  std::cerr << "linear: " << linear_speed_ << " , angular: " << steering_angle_
+            << " , pose: (" << position_x_ << "," << position_y_ << ","
+            << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }

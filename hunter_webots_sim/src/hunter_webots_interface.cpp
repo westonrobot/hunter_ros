@@ -100,13 +100,6 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
 }
 
 void HunterWebotsInterface::UpdateSimState() {
-  // constants for calculation
-  constexpr double rotation_radius =
-      std::hypot(HunterParams::wheelbase / 2.0, HunterParams::track / 2.0) *
-      2.0;
-  constexpr double rotation_theta =
-      std::atan2(HunterParams::wheelbase, HunterParams::track);
-
   // update robot state
   double wheel_speed_or_position[4];
   for (int i = 0; i < 2; ++i) {
@@ -141,20 +134,26 @@ void HunterWebotsInterface::UpdateSimState() {
   }
 
   double linear_speed =
-      (wheel_speed_or_position[2] + wheel_speed_or_position[3]) / 2.0 * HunterParams::wheel_radius;
+      (wheel_speed_or_position[2] + wheel_speed_or_position[3]) / 2.0 *
+      HunterParams::wheel_radius;
   double steering_angle;
-  if (std::abs(wheel_speed_or_position[0]) < 0.005 || std::abs(wheel_speed_or_position[1]) < 0.005) {
+  if (std::abs(wheel_speed_or_position[0]) < 0.005 ||
+      std::abs(wheel_speed_or_position[1]) < 0.005) {
     steering_angle = 0.0;
   } else if (wheel_speed_or_position[0] > 0) {
     // left turn (inner wheel is left wheel)
-    steering_angle =
-        std::atan(l / (l / std::tan(std::abs(wheel_speed_or_position[1])) + w / 2.0));
+    steering_angle = std::atan(
+        l / (l / std::tan(std::abs(wheel_speed_or_position[1])) + w / 2.0));
   } else if (wheel_speed_or_position[0] < 0) {
     // right turn (inner wheel is right wheel)
-    steering_angle =
-        std::atan(l / (l / std::tan(std::abs(wheel_speed_or_position[0])) + w / 2.0));
+    steering_angle = std::atan(
+        l / (l / std::tan(std::abs(wheel_speed_or_position[0])) + w / 2.0));
   }
+  //   std::cerr << "linear: " << linear_speed << " , angular: " <<
+  //   steering_angle << std::endl;
   messenger_->PublishSimStateToROS(linear_speed, steering_angle);
+
+  /*--------------------------------------------------------------------------------*/
 
   // send robot command
   double linear, angular;
@@ -201,8 +200,22 @@ void HunterWebotsInterface::UpdateSimState() {
     if (wheel_cmds[i] < -0.785) wheel_cmds[i] = -0.785;
   }
 
-  wheel_cmds[2] = linear / HunterParams::wheel_radius;
-  wheel_cmds[3] = linear / HunterParams::wheel_radius;
+  double r = l / tan(std::abs(angular));
+  double vel_o = linear / r * (r + w / 2.0);
+  double vel_i = linear / r * (r - w / 2.0);
+  double vel_l, vel_r;
+  if (angular > 0) {
+    // left turn
+    vel_l = vel_i;
+    vel_r = vel_o;
+  } else if (angular < 0) {
+    // right turn
+    vel_r = vel_i;
+    vel_l = vel_o;
+  }
+
+  wheel_cmds[2] = vel_l / HunterParams::wheel_radius;
+  wheel_cmds[3] = vel_r / HunterParams::wheel_radius;
   // set steering angle
   for (int i = 0; i < 2; ++i) {
     webots_ros::set_float set_position_srv;

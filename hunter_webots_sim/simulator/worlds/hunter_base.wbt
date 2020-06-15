@@ -13,4 +13,5 @@ TexturedBackgroundLight {
 Floor {
 }
 HunterV1 {
+  controllerArgs "--synchronize"
 }
