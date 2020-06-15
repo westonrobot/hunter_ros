@@ -42,11 +42,13 @@ int main(int argc, char **argv)
 
     // publish robot state at 50Hz while listening to twist commands
     ros::Rate rate_50hz(50); // 50Hz
+    int cnt = 0;
     while (ros::ok())
     {
         messenger.PublishStateToROS();
         ros::spinOnce();
         rate_50hz.sleep();
+        // if(++cnt == 390) break;
     }
 
     return 0;

@@ -5,7 +5,9 @@
  * Description:
  * 
  * Test commands: 
- * rostopic pub /cmd_vel geometry_msgs/Twist -r 3 -- '[0.5,0.0,0.0]' '[0.0, 0.0, 0.523]'
+ * rostopic pub /cmd_vel geometry_msgs/Twist -r 3 -- '[0.5,0.0,0.0]' '[0.0, 0.0, 0.478]'
+ * 
+ * rostopic pub /reset_odom_integrator std_msgs/Bool true
  *
  * Copyright (c) 2019 Ruixiang Du (rdu)
  */
@@ -17,7 +19,6 @@
 #include <cmath>
 
 #include "hunter_base/hunter_messenger.hpp"
-#include "hunter_base/hunter_params.hpp"
 #include "hunter_msgs/HunterStatus.h"
 
 namespace wescore {
@@ -36,12 +37,20 @@ void HunterROSMessenger::SetupSubscription() {
   // cmd subscriber
   motion_cmd_subscriber_ = nh_->subscribe<geometry_msgs::Twist>(
       "/cmd_vel", 5, &HunterROSMessenger::TwistCmdCallback, this);
+  integrator_reset_subscriber_ = nh_->subscribe<std_msgs::Bool>(
+      "/reset_odom_integrator", 5, &HunterROSMessenger::ResetOdomIntegratorCallback, this);
+}
+
+void HunterROSMessenger::ResetOdomIntegratorCallback(const std_msgs::Bool::ConstPtr &msg) {
+    if(msg->data) ResetOdometry();
 }
 
 void HunterROSMessenger::TwistCmdCallback(
     const geometry_msgs::Twist::ConstPtr &msg) {
   if (!simulated_robot_) {
-    hunter_->SetMotionCommand(msg->linear.x, msg->angular.z);
+    double phi_i = ConvertCentralAngleToInner(msg->angular.z);
+    std::cout << "set steering angle: " << phi_i << std::endl;
+    hunter_->SetMotionCommand(msg->linear.x, phi_i);
   } else {
     std::lock_guard<std::mutex> guard(twist_mutex_);
     current_twist_ = *msg.get();
@@ -56,6 +65,38 @@ void HunterROSMessenger::GetCurrentMotionCmdForSim(double &linear,
   angular = current_twist_.angular.z;
 }
 
+double HunterROSMessenger::ConvertInnerAngleToCentral(double angle)
+{
+    double phi = 0;
+    double phi_i = angle;
+    if (phi_i > steer_angle_tolerance) {
+        // left turn
+        double r = l / std::tan(phi_i) + w / 2;
+        phi = std::atan(l / r);
+    } else if (phi_i < -steer_angle_tolerance) {
+        // right turn
+        double r = l / std::tan(-phi_i) + w / 2;
+        phi = std::atan(l / r);
+        phi = -phi;
+    }
+    return phi;
+}
+
+double HunterROSMessenger::ConvertCentralAngleToInner(double angle) {
+    double phi = angle;
+    double phi_i = 0;
+    if (phi > steer_angle_tolerance) {
+        // left turn
+        phi_i = atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
+    } else if (phi < -steer_angle_tolerance) {
+        // right turn
+        phi = -phi;
+        phi_i = atan(2*l*std::sin(phi)/(2*l*std::cos(phi) - w*std::sin(phi)));
+        phi_i = -phi_i;
+    }
+    return phi_i;
+}
+
 void HunterROSMessenger::PublishStateToROS() {
   current_time_ = ros::Time::now();
   double dt = (current_time_ - last_time_).toSec();
@@ -68,6 +109,8 @@ void HunterROSMessenger::PublishStateToROS() {
   }
 
   auto state = hunter_->GetHunterState();
+  double phi = ConvertInnerAngleToCentral(state.steering_angle);
+  std::cout << "phi: " << phi << " , original: " << state.steering_angle << std::endl;
 
   // publish hunter state message
   hunter_msgs::HunterStatus status_msg;
@@ -75,7 +118,7 @@ void HunterROSMessenger::PublishStateToROS() {
   status_msg.header.stamp = current_time_;
 
   status_msg.linear_velocity = state.linear_velocity;
-  status_msg.steering_angle = state.steering_angle;
+  status_msg.steering_angle = phi; //state.steering_angle;
 
   status_msg.base_state = state.base_state;
   status_msg.control_mode = state.control_mode;
@@ -89,24 +132,6 @@ void HunterROSMessenger::PublishStateToROS() {
   }
 
   status_publisher_.publish(status_msg);
-
-  // state.steering_angle = phi_i
-  // convert phi_i to phi (as defined in kinematic model)
-  static constexpr double steer_angle_tolerance = 0.005;  // ~+-0.287 degrees
-  double phi = 0;
-  double phi_i = state.steering_angle;
-  double l = HunterParams::wheelbase;
-  double w = HunterParams::track;
-  if (phi_i > steer_angle_tolerance) {
-    // left turn
-    double r = l / std::tan(phi_i) + w / 2;
-    phi = std::atan(l / r);
-  } else if (phi_i < -steer_angle_tolerance) {
-    // right turn
-    double r = l / std::tan(-phi_i) + w / 2;
-    phi = std::atan(l / r);
-    phi = -phi;
-  }
 
   // publish odometry and tf
   PublishOdometryToROS(state.linear_velocity, phi, dt);
@@ -159,8 +184,8 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
 
   // propagate model model
   asc::state_t state =
-      model_.Propagate({position_x_, position_y_, theta_},
-                       {linear_speed_, steering_angle_}, 0, dt, dt / 100);
+        model_.Propagate({position_x_, position_y_, theta_},
+                         {linear_speed_, steering_angle_}, 0, dt, dt / 100);
   position_x_ = state[0];
   position_y_ = state[1];
   theta_ = state[2];
@@ -195,9 +220,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
 
-  std::cout << "dt: " << dt << " , linear: " << linear_speed_
-            << " , angular: " << steering_angle_ << " , pose: (" << position_x_
-            << "," << position_y_ << "," << theta_ << ")" << std::endl;
+  std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_
+            << " , pose: (" << position_x_ << "," << position_y_ << ","
+            << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }

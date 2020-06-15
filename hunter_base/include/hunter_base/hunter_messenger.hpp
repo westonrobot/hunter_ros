@@ -12,6 +12,7 @@
 
 #include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
+#include <std_msgs/Bool.h>
 
 #include <string>
 
@@ -22,6 +23,7 @@
 #include "ascent/Utility.h"
 #include "hunter_base/bicycle_model.hpp"
 #include "hunter_base/hunter_base.hpp"
+#include "hunter_base/hunter_params.hpp"
 // #include "hunter_base/system_propagator.hpp"
 
 namespace wescore {
@@ -75,11 +77,16 @@ class HunterROSMessenger {
   ros::Publisher odom_publisher_;
   ros::Publisher status_publisher_;
   ros::Subscriber motion_cmd_subscriber_;
+  ros::Subscriber integrator_reset_subscriber_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
 
   // control inputs
   double linear_speed_ = 0.0;
   double steering_angle_ = 0.0;
+
+  static constexpr double l = HunterParams::wheelbase;
+  static constexpr double w = HunterParams::track;
+  static constexpr double steer_angle_tolerance = 0.005;  // ~+-0.287 degrees
 
   // state variables
   double position_x_ = 0.0;
@@ -91,7 +98,11 @@ class HunterROSMessenger {
   ros::Time last_time_;
   ros::Time current_time_;
 
+  double ConvertInnerAngleToCentral(double angle);
+  double ConvertCentralAngleToInner(double angle);
+
   void TwistCmdCallback(const geometry_msgs::Twist::ConstPtr &msg);
+  void ResetOdomIntegratorCallback(const std_msgs::Bool::ConstPtr &msg);
   void PublishOdometryToROS(double linear, double angular, double dt);
 };
 }  // namespace wescore
