@@ -20,6 +20,7 @@ struct HunterParams {
   static constexpr double wheelbase =
      0.648;  // in meter (front & rear wheel distance)
   static constexpr double wheel_radius = 0.165;  // in meter
+  static constexpr double transmission_reduction_rate = 30; // 1:30
 
   // from user manual v1.2.6_S P4
   // max linear velocity: 1.5 m/s

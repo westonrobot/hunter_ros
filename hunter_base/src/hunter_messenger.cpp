@@ -109,16 +109,18 @@ void HunterROSMessenger::PublishStateToROS() {
   }
 
   auto state = hunter_->GetHunterState();
-  double phi = ConvertInnerAngleToCentral(state.steering_angle);
-  std::cout << "phi: " << phi << " , original: " << state.steering_angle << std::endl;
 
   // publish hunter state message
   hunter_msgs::HunterStatus status_msg;
 
   status_msg.header.stamp = current_time_;
 
-  status_msg.linear_velocity = state.linear_velocity;
-  status_msg.steering_angle = phi; //state.steering_angle;
+  double left_vel = -state.motor_states[1].rpm / 60.0 * 2 * M_PI / HunterParams::transmission_reduction_rate * HunterParams::wheel_radius;
+  double right_vel = state.motor_states[2].rpm / 60.0 * 2 * M_PI / HunterParams::transmission_reduction_rate * HunterParams::wheel_radius;
+  status_msg.linear_velocity = (left_vel + right_vel) / 2.0;
+
+  double phi = ConvertInnerAngleToCentral(state.steering_angle);
+  status_msg.steering_angle = phi; 
 
   status_msg.base_state = state.base_state;
   status_msg.control_mode = state.control_mode;
@@ -134,7 +136,7 @@ void HunterROSMessenger::PublishStateToROS() {
   status_publisher_.publish(status_msg);
 
   // publish odometry and tf
-  PublishOdometryToROS(state.linear_velocity, phi, dt);
+  PublishOdometryToROS(state.linear_velocity, status_msg.steering_angle, dt);
 
   // record time for next integration
   last_time_ = current_time_;
@@ -220,9 +222,9 @@ void HunterROSMessenger::PublishOdometryToROS(double linear, double angular,
   odom_msg.twist.twist.linear.y = 0.0;
   odom_msg.twist.twist.angular.z = steering_angle_;
 
-  std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_
-            << " , pose: (" << position_x_ << "," << position_y_ << ","
-            << theta_ << ")" << std::endl;
+//   std::cout << "linear: " << linear_speed_ << " , angular: " << steering_angle_
+//             << " , pose: (" << position_x_ << "," << position_y_ << ","
+//             << theta_ << ")" << std::endl;
 
   odom_publisher_.publish(odom_msg);
 }
