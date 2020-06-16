@@ -2,10 +2,12 @@
 
 ## Packages
 
-* hunter_bringup: launch and configuration files to start ROS nodes 
 * hunter_base: a ROS wrapper around Hunter SDK to monitor and control the robot
+* hunter_bringup: launch and configuration files to start ROS nodes 
+* hunter_description: urdf models
 * hunter_msgs: hunter related message definitions
 * (hunter_ros: meta package for the Scout robot ROS packages)
+* hunter_webots_sim: webot-based simulator for hunter
 
 ## Communication interface setup
 
