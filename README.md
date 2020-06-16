@@ -105,6 +105,6 @@ Two scripts inside the "hunter_bringup/scripts" folder are provided for easy set
     $ roslaunch hunter_bringup hunter_base_webots_sim.launch
     ```
     
-    **SAFETY PRECAUSION**: 
+**SAFETY PRECAUSION**: 
 
-    The default command values of the keyboard teleop node are high, make sure you decrease the speed commands before starting to control the robot with your keyboard! Have your remote controller ready to take over the control whenever necessary. 
+Always have your remote controller ready to take over the control whenever necessary. 
