@@ -169,7 +169,7 @@ void HunterWebotsInterface::UpdateSimState() {
   if (angular < -HunterParams::max_steer_angle)
     angular = -HunterParams::max_steer_angle;
 
-  double wheel_cmds[4];
+  double wheel_cmds[4] = {0};
 
   // steering wheel angle calculation according to Ackermann constraint
   double theta = std::abs(angular);
@@ -192,8 +192,8 @@ void HunterWebotsInterface::UpdateSimState() {
     wheel_cmds[0] = 0;
     wheel_cmds[1] = 0;
   }
-  std::cout << "angular: " << angular << " wheel0: " << wheel_cmds[0]
-            << " wheel1: " << wheel_cmds[1] << std::endl;
+  //   std::cout << "angular: " << angular << " wheel0: " << wheel_cmds[0]
+  //             << " wheel1: " << wheel_cmds[1] << std::endl;
 
   for (int i = 0; i < 2; ++i) {
     if (wheel_cmds[i] > 0.785) wheel_cmds[i] = 0.785;
@@ -201,17 +201,20 @@ void HunterWebotsInterface::UpdateSimState() {
   }
 
   double r = l / tan(std::abs(angular));
-  double vel_o = linear / r * (r + w / 2.0);
-  double vel_i = linear / r * (r - w / 2.0);
+  double vel_o = linear * (r + w / 2.0) / r;
+  double vel_i = linear * (r - w / 2.0) / r;
   double vel_l, vel_r;
-  if (angular > 0) {
+  if (angular > 0.05) {
     // left turn
     vel_l = vel_i;
     vel_r = vel_o;
-  } else if (angular < 0) {
+  } else if (angular < -0.05) {
     // right turn
     vel_r = vel_i;
     vel_l = vel_o;
+  } else {
+    vel_r = linear;
+    vel_l = linear;
   }
 
   wheel_cmds[2] = vel_l / HunterParams::wheel_radius;
@@ -252,6 +255,9 @@ void HunterWebotsInterface::UpdateSimState() {
                 motor_names_[i].c_str());
     }
   }
+  std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
+            << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
+            << std::endl;
 }
 
 }  // namespace westonrobot
