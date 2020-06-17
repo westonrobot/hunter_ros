@@ -26,6 +26,8 @@
     <param name="intensity_mode" value="1"/>
   </node>
 
+  <include file="$(find hunter_bringup)/launch/sensor_pointcloud_filter.launch" />
+
   <!-- <node name="rviz" pkg="rviz" type="rviz"  args="-d $(find rslidar_pointcloud)/rviz_cfg/rslidar.rviz" /> -->
 
 </launch>
