@@ -19,7 +19,7 @@
 #include "hunter_base/hunter_messenger.hpp"
 #include "hunter_base/hunter_params.hpp"
 
-namespace wescore {
+namespace westonrobot {
 class HunterWebotsInterface {
  public:
   HunterWebotsInterface(ros::NodeHandle* nh, HunterROSMessenger* msger,
@@ -41,6 +41,6 @@ class HunterWebotsInterface {
       "front_right_steering", "front_left_steering", "rear_left_wheel",
       "rear_right_wheel"};
 };
-}  // namespace wescore
+}  // namespace westonrobot
 
 #endif /* HUNTER_WEBOTS_INTERFACE_HPP */

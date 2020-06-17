@@ -3,9 +3,12 @@
  *
  * Created on: Mar 20, 2018 17:18
  * Description:
- * 
- * Reference: 
- *  [1] Paden, Brian, Michal Cap, Sze Zheng Yong, Dmitry Yershov, and Emilio Frazzoli. 2016. “A Survey of Motion Planning and Control Techniques for Self-Driving Urban Vehicles.” arXiv [cs.RO]. arXiv. http://arxiv.org/abs/1604.07446.
+ *
+ * Reference:
+ *  [1] Paden, Brian, Michal Cap, Sze Zheng Yong, Dmitry Yershov, and Emilio
+ * Frazzoli. 2016. “A Survey of Motion Planning and Control Techniques for
+ * Self-Driving Urban Vehicles.” arXiv [cs.RO]. arXiv.
+ * http://arxiv.org/abs/1604.07446.
  *
  * Copyright (c) 2018 Ruixiang Du (rdu)
  */
@@ -17,7 +20,7 @@
 #include "ascent/Utility.h"
 #include "hunter_base/hunter_params.hpp"
 
-namespace wescore {
+namespace westonrobot {
 /*
  * Bicycle kinematics model (rear wheel):
  *  dot_x = v(t) * cos(theta(t))
@@ -48,6 +51,6 @@ class BicycleKinematics {
   control_t u_ = {0.0, 0.0};
   static constexpr double L = HunterParams::wheelbase;
 };
-}  // namespace wescore
+}  // namespace westonrobot
 
 #endif /* BICYCLE_MODEL_HPP */

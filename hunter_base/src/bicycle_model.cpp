@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cstdint>
 
-namespace wescore {
+namespace westonrobot {
 
 BicycleKinematics::BicycleKinematics(control_t u) : u_(u) {}
 
@@ -23,4 +23,4 @@ void BicycleKinematics::operator()(const asc::state_t &x, asc::state_t &xd,
   xd[1] = u_.v * std::sin(x[2]);
   xd[2] = u_.v / L * std::tan(u_.delta);
 }
-}  // namespace wescore
+}  // namespace westonrobot

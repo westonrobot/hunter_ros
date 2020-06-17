@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-namespace wescore {
+namespace westonrobot {
 /* hunter Parameters */
 struct HunterSimParams {
   static constexpr double track =
@@ -26,6 +26,6 @@ struct HunterSimParams {
   static constexpr double max_steer_angle = 0.65;  // in rad, 0.75 for inner wheel
   static constexpr double max_linear_speed = 1.5;  // in m/ss
 };
-}  // namespace wescore
+}  // namespace westonrobot
 
 #endif /* SCOUT_SIM_PARAMS_HPP */

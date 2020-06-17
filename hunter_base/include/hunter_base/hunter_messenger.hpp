@@ -19,14 +19,15 @@
 // #include <tf/transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+#include "wrp_sdk/platforms/hunter/hunter_base.hpp"
+
 #include "ascent/Ascent.h"
 #include "ascent/Utility.h"
 #include "hunter_base/bicycle_model.hpp"
-#include "hunter_base/hunter_base.hpp"
 #include "hunter_base/hunter_params.hpp"
 // #include "hunter_base/system_propagator.hpp"
 
-namespace wescore {
+namespace westonrobot {
 template <typename SystemModel>
 class SystemPropagator {
  public:
@@ -58,7 +59,7 @@ class HunterROSMessenger {
 
   bool simulated_robot_ = false;
   int sim_control_rate_ = 50;
-  
+
   void SetupSubscription();
   void ResetOdometry();
 
@@ -105,6 +106,6 @@ class HunterROSMessenger {
   void ResetOdomIntegratorCallback(const std_msgs::Bool::ConstPtr &msg);
   void PublishOdometryToROS(double linear, double angular, double dt);
 };
-}  // namespace wescore
+}  // namespace westonrobot
 
 #endif /* HUNTER_MESSENGER_HPP */

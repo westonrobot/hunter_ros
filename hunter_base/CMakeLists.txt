@@ -112,7 +112,7 @@ add_subdirectory(ascent)
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES hunter_messenger
-#  CATKIN_DEPENDS hunter_msgs roscpp sensor_msgs std_msgs tf2 tf2_ros wrp_sdk
+#  CATKIN_DEPENDS hunter_msgs wrp_sdk roscpp sensor_msgs std_msgs tf2 tf2_ros 
 #  DEPENDS system_lib
 )
 

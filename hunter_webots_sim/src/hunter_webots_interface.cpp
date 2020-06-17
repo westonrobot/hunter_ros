@@ -22,7 +22,7 @@
 
 // #include "hunter_webots_sim/hunter_sim_params.hpp"
 
-namespace wescore {
+namespace westonrobot {
 HunterWebotsInterface::HunterWebotsInterface(ros::NodeHandle *nh,
                                              HunterROSMessenger *msger,
                                              uint32_t time_step)
@@ -254,4 +254,4 @@ void HunterWebotsInterface::UpdateSimState() {
   }
 }
 
-}  // namespace wescore
+}  // namespace westonrobot
