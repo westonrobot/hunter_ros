@@ -44,6 +44,23 @@
         </inertial> -->
     </link>
 
+    <!-- sensors  -->
+    <link name="rslidar">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" />
+            <geometry>
+                <cylinder length="0.07" radius="0.05" />
+            </geometry>
+            <material name="orange" />
+        </visual>
+    </link>
+
+    <joint name="rslidar_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="rslidar" />
+        <origin xyz="0.36 0.0 0.62" rpy="0 0 0" />
+    </joint>
+
     <link name="base_footprint"/>
 
     <joint name="base_footprint_joint" type="fixed">
@@ -248,4 +265,5 @@
         <child link="rear_right_wheel_link"/>
         <axis xyz="0 -1 0" rpy="0 0 0" />
     </joint>
+
 </robot>
