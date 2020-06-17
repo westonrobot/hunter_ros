@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
   const uint32_t time_step = 1000 / messenger.sim_control_rate_;
   HunterWebotsInterface hunter_webots(&nh, &messenger, time_step);
-  ROS_INFO("Chosen time step: '%d'", time_step);
+  ROS_INFO("Chosen time step: '%d', make sure you set the same time step in Webots scene", time_step);
 
   signal(SIGINT, quit);
 
