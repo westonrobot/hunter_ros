@@ -1,9 +1,0 @@
-<launch>
-
-  <!--- Run gmapping -->
-  <include file="$(find hunter_teb_planner)/launch/config_gmapping.launch" />
-
-  <!--- Run Move Base -->
-  <include file="$(find hunter_teb_planner)/launch/config_move_base.launch" />
-
-</launch>
