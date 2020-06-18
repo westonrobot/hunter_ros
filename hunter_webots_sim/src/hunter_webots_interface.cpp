@@ -148,6 +148,7 @@ void HunterWebotsInterface::UpdateSimState() {
     // right turn (inner wheel is right wheel)
     steering_angle = std::atan(
         l / (l / std::tan(std::abs(wheel_speed_or_position[0])) + w / 2.0));
+    steering_angle = -steering_angle;
   }
   //   std::cerr << "linear: " << linear_speed << " , angular: " <<
   //   steering_angle << std::endl;
@@ -255,9 +256,9 @@ void HunterWebotsInterface::UpdateSimState() {
                 motor_names_[i].c_str());
     }
   }
-  std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
-            << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
-            << std::endl;
+//   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
+//             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
+//             << std::endl;
 }
 
 }  // namespace westonrobot

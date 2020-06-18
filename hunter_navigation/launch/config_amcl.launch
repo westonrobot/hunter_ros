@@ -1,12 +1,12 @@
 <launch>
 
     <!--  ****** Maps *****  -->
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find hunter_teb_planner)/maps/wroffice_local.yaml" output="screen">
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find hunter_navigation)/maps/wroffice_local.yaml" output="screen">
         <param name="frame_id" value="map"/>
     </node>
 
     <node pkg="amcl" type="amcl" name="amcl" output="screen">
-        <rosparam file="$(find hunter_teb_planner)/cfg/amcl_params.yaml" command="load" />
+        <rosparam file="$(find hunter_navigation)/cfg/amcl_params.yaml" command="load" />
 
         <param name="initial_pose_x" value="2"/>
         <param name="initial_pose_y" value="2"/>
