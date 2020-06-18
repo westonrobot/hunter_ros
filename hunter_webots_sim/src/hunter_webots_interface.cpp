@@ -33,6 +33,11 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
   // reset controller name
   robot_name_ = controller_name;
 
+  pc_sub_ =
+      nh_->subscribe(robot_name_ + "/rslidar/point_cloud", 1000,
+                     &HunterWebotsInterface::LidarPointCloudCallback, this);
+  pc2_pub_ = nh_->advertise<sensor_msgs::PointCloud2>("/rslidar_points", 1000);
+
   // init motors
   for (int i = 0; i < 2; ++i) {
     // position
@@ -99,7 +104,7 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
                 motor_names_[i].c_str());
   }
 
-  std::string lidar_enable_srv_name = robot_name_ + "/Velodyne_VLP_16/enable";
+  std::string lidar_enable_srv_name = robot_name_ + "/rslidar/enable";
   if (ros::service::exists(lidar_enable_srv_name, true)) {
     // enable lidar
     ros::ServiceClient enable_lidar_client;
@@ -114,7 +119,8 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
       ROS_ERROR("Failed to enable Lidar");
 
     // enable lidar pointcloud
-    std::string lidar_enable_pc_srv_name = robot_name_ + "/Velodyne_VLP_16/enable_point_cloud";
+    std::string lidar_enable_pc_srv_name =
+        robot_name_ + "/rslidar/enable_point_cloud";
     ros::ServiceClient enable_lidar_pc_client;
     webots_ros::set_bool enable_lidar_pc_srv;
     enable_lidar_pc_client =
@@ -182,6 +188,19 @@ void HunterWebotsInterface::UpdateSimState() {
   //   std::cerr << "linear: " << linear_speed << " , angular: " <<
   //   steering_angle << std::endl;
   messenger_->PublishSimStateToROS(linear_speed, steering_angle);
+
+  geometry_msgs::TransformStamped tf_msg;
+  tf_msg.header.stamp = ros::Time::now();
+  tf_msg.header.frame_id = "rslidar";
+  tf_msg.child_frame_id = robot_name_ + "/rslidar";
+
+  tf_msg.transform.translation.x = 0;
+  tf_msg.transform.translation.y = 0;
+  tf_msg.transform.translation.z = 0;
+  tf_msg.transform.rotation =
+      tf::createQuaternionMsgFromRollPitchYaw(M_PI / 2.0, 0, 0);
+
+  tf_broadcaster_.sendTransform(tf_msg);
 
   /*--------------------------------------------------------------------------------*/
 
@@ -288,6 +307,13 @@ void HunterWebotsInterface::UpdateSimState() {
   //   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
   //             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
   //             << std::endl;
+}
+
+void HunterWebotsInterface::LidarPointCloudCallback(
+    const sensor_msgs::PointCloud::ConstPtr &msg) {
+  sensor_msgs::PointCloud2 pc2_msg;
+  sensor_msgs::convertPointCloudToPointCloud2(*msg.get(), pc2_msg);
+  pc2_pub_.publish(pc2_msg);
 }
 
 }  // namespace westonrobot
