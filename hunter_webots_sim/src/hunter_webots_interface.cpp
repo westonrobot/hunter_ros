@@ -12,6 +12,7 @@
 
 #include "hunter_webots_sim/hunter_webots_interface.hpp"
 
+#include <ros/service.h>
 #include <pcl_ros/transforms.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
@@ -96,6 +97,34 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
     else
       ROS_ERROR("Failed to call service set_velocity on motor %s.",
                 motor_names_[i].c_str());
+  }
+
+  std::string lidar_enable_srv_name = robot_name_ + "/Velodyne_VLP_16/enable";
+  if (ros::service::exists(lidar_enable_srv_name, true)) {
+    // enable lidar
+    ros::ServiceClient enable_lidar_client;
+    webots_ros::set_int enable_lidar_srv;
+    enable_lidar_client =
+        nh_->serviceClient<webots_ros::set_int>(lidar_enable_srv_name);
+    enable_lidar_srv.request.value = 1;
+    if (enable_lidar_client.call(enable_lidar_srv) &&
+        enable_lidar_srv.response.success == 1)
+      ROS_INFO("Lidar Enabled.");
+    else
+      ROS_ERROR("Failed to enable Lidar");
+
+    // enable lidar pointcloud
+    std::string lidar_enable_pc_srv_name = robot_name_ + "/Velodyne_VLP_16/enable_point_cloud";
+    ros::ServiceClient enable_lidar_pc_client;
+    webots_ros::set_int enable_lidar_pc_srv;
+    enable_lidar_pc_client =
+        nh_->serviceClient<webots_ros::set_int>(lidar_enable_pc_srv_name);
+    enable_lidar_pc_srv.request.value = 1;
+    if (enable_lidar_pc_client.call(enable_lidar_pc_srv) &&
+        enable_lidar_pc_srv.response.success == 1)
+      ROS_INFO("Lidar Pointcloud Enabled.");
+    else
+      ROS_ERROR("Failed to enable Lidar Pointcloud");
   }
 }
 
@@ -256,9 +285,9 @@ void HunterWebotsInterface::UpdateSimState() {
                 motor_names_[i].c_str());
     }
   }
-//   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
-//             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
-//             << std::endl;
+  //   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
+  //             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
+  //             << std::endl;
 }
 
 }  // namespace westonrobot

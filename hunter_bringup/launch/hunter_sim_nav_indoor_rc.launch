@@ -1,0 +1,6 @@
+<launch>
+    <include file="$(find hunter_webots_sim)/launch/hunter_indoor_navigation.launch" />
+    <include file="$(find rc_ctrl)/launch/hunter_rc_ctrl.launch" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hunter_navigation)/rviz/rviz_navigation.rviz"/>
+</launch>

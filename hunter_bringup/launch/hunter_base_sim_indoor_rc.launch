@@ -1,6 +1,0 @@
-<launch>
-    <include file="$(find hunter_webots_sim)/launch/hunter_base.launch" />
-    <include file="$(find hunter_description)/launch/load_nav_model.launch" />
-
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hunter_teb_planner)/cfg/rviz_navigation.rviz"/>
-</launch>
