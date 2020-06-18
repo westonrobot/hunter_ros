@@ -106,7 +106,7 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
     webots_ros::set_int enable_lidar_srv;
     enable_lidar_client =
         nh_->serviceClient<webots_ros::set_int>(lidar_enable_srv_name);
-    enable_lidar_srv.request.value = 1;
+    enable_lidar_srv.request.value = 10;
     if (enable_lidar_client.call(enable_lidar_srv) &&
         enable_lidar_srv.response.success == 1)
       ROS_INFO("Lidar Enabled.");
@@ -116,10 +116,10 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
     // enable lidar pointcloud
     std::string lidar_enable_pc_srv_name = robot_name_ + "/Velodyne_VLP_16/enable_point_cloud";
     ros::ServiceClient enable_lidar_pc_client;
-    webots_ros::set_int enable_lidar_pc_srv;
+    webots_ros::set_bool enable_lidar_pc_srv;
     enable_lidar_pc_client =
-        nh_->serviceClient<webots_ros::set_int>(lidar_enable_pc_srv_name);
-    enable_lidar_pc_srv.request.value = 1;
+        nh_->serviceClient<webots_ros::set_bool>(lidar_enable_pc_srv_name);
+    enable_lidar_pc_srv.request.value = true;
     if (enable_lidar_pc_client.call(enable_lidar_pc_srv) &&
         enable_lidar_pc_srv.response.success == 1)
       ROS_INFO("Lidar Pointcloud Enabled.");
