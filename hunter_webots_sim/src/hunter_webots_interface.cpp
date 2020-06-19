@@ -19,6 +19,7 @@
 
 #include <ros/service.h>
 #include <tf2_eigen/tf2_eigen.h>
+#include <tf2/LinearMath/Quaternion.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
 #include <pcl_ros/transforms.h>
@@ -145,6 +146,8 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
     else
       ROS_ERROR("Failed to enable Lidar Pointcloud");
   }
+
+  PublishSimulatedLidarTF();
 }
 
 void HunterWebotsInterface::UpdateSimState() {
@@ -201,22 +204,6 @@ void HunterWebotsInterface::UpdateSimState() {
   //   std::cerr << "linear: " << linear_speed << " , angular: " <<
   //   steering_angle << std::endl;
   messenger_->PublishSimStateToROS(linear_speed, steering_angle);
-
-  geometry_msgs::TransformStamped tf_msg;
-  tf_msg.header.stamp = ros::Time::now();
-  tf_msg.header.frame_id = "rslidar";
-  tf_msg.child_frame_id = robot_name_ + "/rslidar";
-
-  tf_msg.transform.translation.x = 0;
-  tf_msg.transform.translation.y = 0;
-  tf_msg.transform.translation.z = 0;
-  geometry_msgs::Quaternion unit_quat;
-  unit_quat.w = 1.0;
-  tf_msg.transform.rotation =
-      //   unit_quat;
-      tf::createQuaternionMsgFromRollPitchYaw(M_PI * 2.0, 0, 0);
-
-  tf_broadcaster_.sendTransform(tf_msg);
 
   /*--------------------------------------------------------------------------------*/
 
@@ -323,6 +310,23 @@ void HunterWebotsInterface::UpdateSimState() {
   //   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
   //             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
   //             << std::endl;
+}
+
+void HunterWebotsInterface::PublishSimulatedLidarTF() {
+  geometry_msgs::TransformStamped static_transformStamped;
+  static_transformStamped.header.stamp = ros::Time::now();
+  static_transformStamped.header.frame_id = "rslidar";
+  static_transformStamped.child_frame_id = robot_name_ + "/rslidar";
+  static_transformStamped.transform.translation.x = 0;
+  static_transformStamped.transform.translation.y = 0;
+  static_transformStamped.transform.translation.z = 0;
+  tf2::Quaternion quat;
+  quat.setRPY(0, 0, 0);
+  static_transformStamped.transform.rotation.x = quat.x();
+  static_transformStamped.transform.rotation.y = quat.y();
+  static_transformStamped.transform.rotation.z = quat.z();
+  static_transformStamped.transform.rotation.w = quat.w();
+  static_broadcaster_.sendTransform(static_transformStamped);
 }
 
 void HunterWebotsInterface::LidarPointCloudCallback(

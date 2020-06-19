@@ -14,6 +14,7 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/static_transform_broadcaster.h>
 
 #include <string>
 
@@ -30,12 +31,13 @@ class HunterWebotsInterface {
   void UpdateSimState();
 
  private:
-  ros::NodeHandle* nh_;
-  HunterROSMessenger* messenger_;
   uint32_t time_step_;
-  tf2_ros::TransformBroadcaster tf_broadcaster_;
+  HunterROSMessenger* messenger_;
+
+  ros::NodeHandle* nh_;
   ros::Subscriber pc_sub_;
   ros::Publisher pc2_pub_;
+  tf2_ros::StaticTransformBroadcaster static_broadcaster_;
 
   static constexpr double l = HunterParams::wheelbase;
   static constexpr double w = HunterParams::track;
@@ -45,6 +47,7 @@ class HunterWebotsInterface {
       "front_right_steering", "front_left_steering", "rear_left_wheel",
       "rear_right_wheel"};
 
+  void PublishSimulatedLidarTF();
   void LidarPointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
 };
 }  // namespace westonrobot
