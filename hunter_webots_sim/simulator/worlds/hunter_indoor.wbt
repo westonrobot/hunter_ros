@@ -1436,7 +1436,7 @@ HunterV1 {
   translation 8.62 0.221141 11.1
   controllerArgs "--synchronize	--clock"
   extensionSlot [
-    Transform {
+    DEF IMU Transform {
       translation 0 0 0.18
       rotation 0 0 1 3.14
       children [
