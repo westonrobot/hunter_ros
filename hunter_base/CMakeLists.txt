@@ -132,7 +132,9 @@ include_directories(
 #   src/${PROJECT_NAME}/hunter_base.cpp
 # )
 
-add_library(hunter_messenger STATIC src/hunter_messenger.cpp src/bicycle_model.cpp)
+add_library(hunter_messenger STATIC 
+    src/hunter_messenger.cpp 
+    src/bicycle_model.cpp)
 target_link_libraries(hunter_messenger ${catkin_LIBRARIES} ascent)
 
 add_executable(hunter_base_node src/hunter_base_node.cpp)
