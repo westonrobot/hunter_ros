@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
 <launch>
+
   <!-- start Webots -->
   <arg name="no-gui" default="false," doc="Start Webots with minimal GUI"/>
   <include file="$(find hunter_webots_sim)/launch/webots.launch">

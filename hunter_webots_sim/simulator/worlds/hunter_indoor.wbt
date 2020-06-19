@@ -7,8 +7,8 @@ WorldInfo {
   basicTimeStep 20
 }
 Viewpoint {
-  orientation -0.5021107068764956 -0.8268697091998047 -0.25332059144060215 1.2778719976919382
-  position -9.712893796646785 14.954928147656753 14.653776237267612
+  orientation -0.42105803436001016 -0.8859033470004098 -0.19464170024523586 1.1866477954332455
+  position -6.335796292799366 7.75854480194802 13.176563044826146
   exposure 0.5
   ambientOcclusionRadius 1
 }
@@ -1434,4 +1434,12 @@ DEF TREES Transform {
 }
 HunterV1 {
   translation 8.62 0.221141 11.1
+  controllerArgs "--synchronize	--clock"
+  extensionSlot [
+    VelodyneVLP-16 {
+      translation -0.036 0 0.62
+      rotation 0 0.7071067811865475 0.7071067811865475 3.14
+      name "rslidar"
+    }
+  ]
 }

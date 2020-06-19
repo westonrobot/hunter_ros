@@ -2,11 +2,11 @@
 
     <!--  ************** Navigation ***************  -->
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-        <rosparam file="$(find hunter_teb_planner)/cfg/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find hunter_teb_planner)/cfg/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find hunter_teb_planner)/cfg/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find hunter_teb_planner)/cfg/global_costmap_params.yaml" command="load" />
-        <rosparam file="$(find hunter_teb_planner)/cfg/teb_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find hunter_navigation)/cfg/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find hunter_navigation)/cfg/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find hunter_navigation)/cfg/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find hunter_navigation)/cfg/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find hunter_navigation)/cfg/teb_local_planner_params.yaml" command="load" />
 
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="planner_frequency" value="1.0" />

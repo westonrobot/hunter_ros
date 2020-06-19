@@ -12,13 +12,28 @@
 
 #include "hunter_webots_sim/hunter_webots_interface.hpp"
 
-#include <pcl_ros/transforms.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <sensor_msgs/point_cloud_conversion.h>
 #include <webots_ros/get_float.h>
 #include <webots_ros/set_bool.h>
 #include <webots_ros/set_float.h>
 #include <webots_ros/set_int.h>
+
+#include <ros/service.h>
+#include <tf2_eigen/tf2_eigen.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud_conversion.h>
+#include <pcl_ros/transforms.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/ModelCoefficients.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl_ros/transforms.h>
 
 // #include "hunter_webots_sim/hunter_sim_params.hpp"
 
@@ -31,6 +46,11 @@ HunterWebotsInterface::HunterWebotsInterface(ros::NodeHandle *nh,
 void HunterWebotsInterface::InitComponents(std::string controller_name) {
   // reset controller name
   robot_name_ = controller_name;
+
+  pc_sub_ =
+      nh_->subscribe(robot_name_ + "/rslidar/point_cloud", 1000,
+                     &HunterWebotsInterface::LidarPointCloudCallback, this);
+  pc2_pub_ = nh_->advertise<sensor_msgs::PointCloud2>("/rslidar_points", 1000);
 
   // init motors
   for (int i = 0; i < 2; ++i) {
@@ -97,6 +117,37 @@ void HunterWebotsInterface::InitComponents(std::string controller_name) {
       ROS_ERROR("Failed to call service set_velocity on motor %s.",
                 motor_names_[i].c_str());
   }
+
+  std::string lidar_enable_srv_name = robot_name_ + "/rslidar/enable";
+  if (ros::service::exists(lidar_enable_srv_name, true)) {
+    // enable lidar
+    ros::ServiceClient enable_lidar_client;
+    webots_ros::set_int enable_lidar_srv;
+    enable_lidar_client =
+        nh_->serviceClient<webots_ros::set_int>(lidar_enable_srv_name);
+    enable_lidar_srv.request.value = 10;
+    if (enable_lidar_client.call(enable_lidar_srv) &&
+        enable_lidar_srv.response.success == 1)
+      ROS_INFO("Lidar Enabled.");
+    else
+      ROS_ERROR("Failed to enable Lidar");
+
+    // enable lidar pointcloud
+    std::string lidar_enable_pc_srv_name =
+        robot_name_ + "/rslidar/enable_point_cloud";
+    ros::ServiceClient enable_lidar_pc_client;
+    webots_ros::set_bool enable_lidar_pc_srv;
+    enable_lidar_pc_client =
+        nh_->serviceClient<webots_ros::set_bool>(lidar_enable_pc_srv_name);
+    enable_lidar_pc_srv.request.value = true;
+    if (enable_lidar_pc_client.call(enable_lidar_pc_srv) &&
+        enable_lidar_pc_srv.response.success == 1)
+      ROS_INFO("Lidar Pointcloud Enabled.");
+    else
+      ROS_ERROR("Failed to enable Lidar Pointcloud");
+  }
+
+  PublishSimulatedLidarTF();
 }
 
 void HunterWebotsInterface::UpdateSimState() {
@@ -148,6 +199,7 @@ void HunterWebotsInterface::UpdateSimState() {
     // right turn (inner wheel is right wheel)
     steering_angle = std::atan(
         l / (l / std::tan(std::abs(wheel_speed_or_position[0])) + w / 2.0));
+    steering_angle = -steering_angle;
   }
   //   std::cerr << "linear: " << linear_speed << " , angular: " <<
   //   steering_angle << std::endl;
@@ -255,9 +307,67 @@ void HunterWebotsInterface::UpdateSimState() {
                 motor_names_[i].c_str());
     }
   }
-  std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
-            << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
-            << std::endl;
+  //   std::cout << "angular: " << wheel_cmds[0] << " , " << wheel_cmds[1]
+  //             << " linear: " << wheel_cmds[2] << " , " << wheel_cmds[3]
+  //             << std::endl;
+}
+
+void HunterWebotsInterface::PublishSimulatedLidarTF() {
+  geometry_msgs::TransformStamped static_transformStamped;
+  static_transformStamped.header.stamp = ros::Time::now();
+  static_transformStamped.header.frame_id = "rslidar";
+  static_transformStamped.child_frame_id = robot_name_ + "/rslidar";
+  static_transformStamped.transform.translation.x = 0;
+  static_transformStamped.transform.translation.y = 0;
+  static_transformStamped.transform.translation.z = 0;
+  tf2::Quaternion quat;
+  quat.setRPY(0, 0, 0);
+  static_transformStamped.transform.rotation.x = quat.x();
+  static_transformStamped.transform.rotation.y = quat.y();
+  static_transformStamped.transform.rotation.z = quat.z();
+  static_transformStamped.transform.rotation.w = quat.w();
+  static_broadcaster_.sendTransform(static_transformStamped);
+}
+
+void HunterWebotsInterface::LidarPointCloudCallback(
+    const sensor_msgs::PointCloud::ConstPtr &msg) {
+  sensor_msgs::PointCloud2 pc2_msg;
+  sensor_msgs::convertPointCloudToPointCloud2(*msg.get(), pc2_msg);
+
+  // create a container for the data.
+  pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(
+      new pcl::PointCloud<pcl::PointXYZ>);
+
+  // convert PointCloud2 to PCL PointCloud
+  pcl::PCLPointCloud2 pcl_pc2;
+  pcl_conversions::toPCL(pc2_msg, pcl_pc2);
+  pcl::fromPCLPointCloud2(pcl_pc2, *temp_cloud);
+
+  // query tf transform
+  Eigen::Matrix4f transform;
+  Eigen::Quaternionf quat = Eigen::Quaternionf{
+      Eigen::AngleAxisf{M_PI / 2.0, Eigen::Vector3f{1, 0, 0}}};
+  transform.block<3, 3>(0, 0) = quat.toRotationMatrix();
+  transform(3, 0) = 0;
+  transform(3, 1) = 0;
+  transform(3, 2) = 0;
+  transform(3, 3) = 1;
+
+  // transform pointcloud
+  //   pcl::PointCloud<pcl::PointXYZ>::Ptr pc_transformed(
+  //       new pcl::PointCloud<pcl::PointXYZ>);
+  //   pcl_ros::transformPointCloud(*temp_cloud, *pc_transformed, transform);
+  //   pcl_ros::transformPointCloud(transform, *temp_cloud, *pc_transformed);
+  sensor_msgs::PointCloud2 pc_transformed;
+  pcl_ros::transformPointCloud(transform, pc2_msg, pc_transformed);
+
+  //   sensor_msgs::PointCloud2 cloud_publish;
+  //   pcl::toROSMsg(*pc_transformed, cloud_publish);
+  //   cloud_publish.header = pc2_msg.header;
+
+  // publish to ROS
+  pc2_pub_.publish(pc_transformed);
+  //   pc2_pub_.publish(pc2_msg);
 }
 
 }  // namespace westonrobot
