@@ -3,7 +3,7 @@
     
     <!-- set up sensors -->
     <include file="$(find hunter_bringup)/launch/sensor_pointcloud_filter.launch" />
-    <include file="$(find hunter_bringup)/launch/sensor_pointcloud_to_laserscan.launch" />
+    <!-- <include file="$(find hunter_bringup)/launch/sensor_pointcloud_to_laserscan.launch" /> -->
 
     <!-- rc to can -->
     <include file="$(find rc_ctrl)/launch/hunter_rc_ctrl.launch" />

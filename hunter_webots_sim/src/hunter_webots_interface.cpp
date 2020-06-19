@@ -23,19 +23,6 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
 #include <pcl_ros/transforms.h>
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-#include <pcl/ModelCoefficients.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/point_types.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl_ros/transforms.h>
-
-// #include "hunter_webots_sim/hunter_sim_params.hpp"
 
 namespace westonrobot {
 HunterWebotsInterface::HunterWebotsInterface(ros::NodeHandle *nh,
@@ -334,16 +321,7 @@ void HunterWebotsInterface::LidarPointCloudCallback(
   sensor_msgs::PointCloud2 pc2_msg;
   sensor_msgs::convertPointCloudToPointCloud2(*msg.get(), pc2_msg);
 
-  // create a container for the data.
-  pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(
-      new pcl::PointCloud<pcl::PointXYZ>);
-
-  // convert PointCloud2 to PCL PointCloud
-  pcl::PCLPointCloud2 pcl_pc2;
-  pcl_conversions::toPCL(pc2_msg, pcl_pc2);
-  pcl::fromPCLPointCloud2(pcl_pc2, *temp_cloud);
-
-  // query tf transform
+  // transform pointcloud
   Eigen::Matrix4f transform;
   Eigen::Quaternionf quat = Eigen::Quaternionf{
       Eigen::AngleAxisf{M_PI / 2.0, Eigen::Vector3f{1, 0, 0}}};
@@ -352,12 +330,6 @@ void HunterWebotsInterface::LidarPointCloudCallback(
   transform(3, 1) = 0;
   transform(3, 2) = 0;
   transform(3, 3) = 1;
-
-  // transform pointcloud
-  //   pcl::PointCloud<pcl::PointXYZ>::Ptr pc_transformed(
-  //       new pcl::PointCloud<pcl::PointXYZ>);
-  //   pcl_ros::transformPointCloud(*temp_cloud, *pc_transformed, transform);
-  //   pcl_ros::transformPointCloud(transform, *temp_cloud, *pc_transformed);
   sensor_msgs::PointCloud2 pc_transformed;
   pcl_ros::transformPointCloud(transform, pc2_msg, pc_transformed);
 
