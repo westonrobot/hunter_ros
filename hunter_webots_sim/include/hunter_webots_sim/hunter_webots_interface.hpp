@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/Imu.h>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/static_transform_broadcaster.h>
 
@@ -37,6 +38,10 @@ class HunterWebotsInterface {
   ros::NodeHandle* nh_;
   ros::Subscriber pc_sub_;
   ros::Publisher pc2_pub_;
+  ros::Subscriber gyro_sub_;
+  ros::Subscriber accel_sub_;
+  ros::Publisher imu_pub_;
+
   tf2_ros::StaticTransformBroadcaster static_broadcaster_;
 
   static constexpr double l = HunterParams::wheelbase;
@@ -47,8 +52,13 @@ class HunterWebotsInterface {
       "front_right_steering", "front_left_steering", "rear_left_wheel",
       "rear_right_wheel"};
 
-  void PublishSimulatedLidarTF();
-  void LidarPointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
+  void SetupRobot();
+  void SetupLidar();
+  void SetupIMU();
+
+  void GyroNewDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  void AccelNewDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  void LidarNewPointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
 };
 }  // namespace westonrobot
 

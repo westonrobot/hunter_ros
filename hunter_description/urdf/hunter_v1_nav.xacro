@@ -56,6 +56,23 @@
         <origin xyz="0.36 0.0 0.62" rpy="0 0 0" />
     </joint>
 
+    <link name="imu">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" />
+            <geometry>
+                <cylinder length="0.03" radius="0.02" />
+            </geometry>
+            <material name="red" />
+        </visual>
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="imu" />
+        <origin xyz="0.32 0.0 0.18" rpy="0 0 0" />
+    </joint>
+
+
     <link name="base_footprint"/>
 
     <joint name="base_footprint_joint" type="fixed">
