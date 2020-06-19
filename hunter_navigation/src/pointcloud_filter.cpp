@@ -13,7 +13,6 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/filter.h>
 
-
 namespace westonrobot {
 PointCloudFilter::PointCloudFilter(ros::NodeHandle *nh, std::string input, std::string output):nh_(nh) {
     pc2_sub_ =
@@ -25,7 +24,6 @@ PointCloudFilter::PointCloudFilter(ros::NodeHandle *nh, std::string input, std::
 void LidarPointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     pcl::PCLPointCloud2 pcl_pc2;
     pcl_conversions::toPCL(*msg, pcl_pc2);
-    pcl::fromPCLPointCloud2(pcl_pc2,*temp_cloud);
 
     if (!points->is_dense) {
         points_filtered->is_dense = false;
