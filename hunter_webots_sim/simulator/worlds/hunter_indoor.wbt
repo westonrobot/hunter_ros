@@ -1434,6 +1434,7 @@ DEF TREES Transform {
 }
 HunterV1 {
   translation 8.62 0.221141 11.1
+  controllerArgs "--synchronize	--clock"
   extensionSlot [
     VelodyneVLP-16 {
       translation -0.036 0 0.62

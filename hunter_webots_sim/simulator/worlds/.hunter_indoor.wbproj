@@ -8,4 +8,5 @@ selectionDisabled: 0
 viewpointLocked: 0
 orthographicViewHeight: 1
 textFiles: -1
+globalOptionalRendering: LidarPointClouds
 renderingDevicePerspectives: television:display;0;1.375;0;0

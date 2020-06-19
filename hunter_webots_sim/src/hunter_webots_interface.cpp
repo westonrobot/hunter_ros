@@ -12,14 +12,27 @@
 
 #include "hunter_webots_sim/hunter_webots_interface.hpp"
 
-#include <ros/service.h>
-#include <pcl_ros/transforms.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <sensor_msgs/point_cloud_conversion.h>
 #include <webots_ros/get_float.h>
 #include <webots_ros/set_bool.h>
 #include <webots_ros/set_float.h>
 #include <webots_ros/set_int.h>
+
+#include <ros/service.h>
+#include <tf2_eigen/tf2_eigen.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud_conversion.h>
+#include <pcl_ros/transforms.h>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/ModelCoefficients.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl_ros/transforms.h>
 
 // #include "hunter_webots_sim/hunter_sim_params.hpp"
 
@@ -197,8 +210,11 @@ void HunterWebotsInterface::UpdateSimState() {
   tf_msg.transform.translation.x = 0;
   tf_msg.transform.translation.y = 0;
   tf_msg.transform.translation.z = 0;
+  geometry_msgs::Quaternion unit_quat;
+  unit_quat.w = 1.0;
   tf_msg.transform.rotation =
-      tf::createQuaternionMsgFromRollPitchYaw(M_PI / 2.0, 0, 0);
+      //   unit_quat;
+      tf::createQuaternionMsgFromRollPitchYaw(M_PI * 2.0, 0, 0);
 
   tf_broadcaster_.sendTransform(tf_msg);
 
@@ -313,7 +329,41 @@ void HunterWebotsInterface::LidarPointCloudCallback(
     const sensor_msgs::PointCloud::ConstPtr &msg) {
   sensor_msgs::PointCloud2 pc2_msg;
   sensor_msgs::convertPointCloudToPointCloud2(*msg.get(), pc2_msg);
-  pc2_pub_.publish(pc2_msg);
+
+  // create a container for the data.
+  pcl::PointCloud<pcl::PointXYZ>::Ptr temp_cloud(
+      new pcl::PointCloud<pcl::PointXYZ>);
+
+  // convert PointCloud2 to PCL PointCloud
+  pcl::PCLPointCloud2 pcl_pc2;
+  pcl_conversions::toPCL(pc2_msg, pcl_pc2);
+  pcl::fromPCLPointCloud2(pcl_pc2, *temp_cloud);
+
+  // query tf transform
+  Eigen::Matrix4f transform;
+  Eigen::Quaternionf quat = Eigen::Quaternionf{
+      Eigen::AngleAxisf{M_PI / 2.0, Eigen::Vector3f{1, 0, 0}}};
+  transform.block<3, 3>(0, 0) = quat.toRotationMatrix();
+  transform(3, 0) = 0;
+  transform(3, 1) = 0;
+  transform(3, 2) = 0;
+  transform(3, 3) = 1;
+
+  // transform pointcloud
+  //   pcl::PointCloud<pcl::PointXYZ>::Ptr pc_transformed(
+  //       new pcl::PointCloud<pcl::PointXYZ>);
+  //   pcl_ros::transformPointCloud(*temp_cloud, *pc_transformed, transform);
+  //   pcl_ros::transformPointCloud(transform, *temp_cloud, *pc_transformed);
+  sensor_msgs::PointCloud2 pc_transformed;
+  pcl_ros::transformPointCloud(transform, pc2_msg, pc_transformed);
+
+  //   sensor_msgs::PointCloud2 cloud_publish;
+  //   pcl::toROSMsg(*pc_transformed, cloud_publish);
+  //   cloud_publish.header = pc2_msg.header;
+
+  // publish to ROS
+  pc2_pub_.publish(pc_transformed);
+  //   pc2_pub_.publish(pc2_msg);
 }
 
 }  // namespace westonrobot

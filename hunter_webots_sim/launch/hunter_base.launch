@@ -18,6 +18,6 @@
     <param name="sim_control_rate" value="50" />
   </node>
 
-  <include file="$(find hunter_description)/launch/load_nav_model.launch"/>
+  <!-- <include file="$(find hunter_description)/launch/load_nav_model.launch"/> -->
 
 </launch>

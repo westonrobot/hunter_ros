@@ -3,8 +3,19 @@
     <!--  ************** Global Parameters ***************  -->
     <param name="/use_sim_time" value="true"/>
 
-       <!-- localization -->
-    <include file="$(find hunter_navigation)/launch/config_amcl.launch" />
+    <!-- map & localization -->
+    <!-- <include file="$(find hunter_navigation)/launch/config_amcl.launch" /> -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find hunter_navigation)/maps/webots_indoor.yaml" output="screen">
+        <param name="frame_id" value="map"/>
+    </node>
+
+    <node pkg="amcl" type="amcl" name="amcl" output="screen">
+        <rosparam file="$(find hunter_navigation)/cfg/amcl_params.yaml" command="load" />
+
+        <param name="initial_pose_x" value="2"/>
+        <param name="initial_pose_y" value="2"/>
+        <param name="initial_pose_a" value="0"/>
+    </node>
 
     <!-- motion planning & control -->
     <include file="$(find hunter_navigation)/launch/config_move_base.launch" />
