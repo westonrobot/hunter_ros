@@ -6,7 +6,7 @@
   <arg name="enable_gps" default="false" />
   <arg name="enable_imu_acc" default="false" />
   <arg name="enable_imu_ori" default="false" />
-  <arg name="points_topic" default="/rslidar_points" />
+  <arg name="points_topic" default="/rslidar_points_filtered" />
 
   <!-- transformation between lidar and base_link -->
   <!-- <node pkg="tf" type="static_transform_publisher" name="lidar2base_publisher" args="0 0 0 0 0 0 base_link velodyne 10" /> -->

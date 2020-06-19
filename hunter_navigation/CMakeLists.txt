@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   teb_local_planner
   tf2
   tf2_ros
+  pcl_ros
   pcl_conversions
 )
 
@@ -127,8 +128,10 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-# add_executable(hunter_pcfilter_node src/pointcloud_filter.cpp)
-# target_link_libraries(hunter_pcfilter_node ${catkin_LIBRARIES})
+add_executable(hunter_pcfilter_node
+    src/pcfilter_node.cpp
+    src/pointcloud_filter.cpp)
+target_link_libraries(hunter_pcfilter_node ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
