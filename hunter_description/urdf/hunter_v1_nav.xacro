@@ -40,7 +40,7 @@
     </link>
 
     <!-- sensors  -->
-    <link name="rslidar">
+    <link name="rslidar_link">
         <visual>
             <origin xyz="0.0 0.0 0.0" />
             <geometry>
@@ -56,7 +56,7 @@
         <origin xyz="0.36 0.0 0.62" rpy="0 0 0" />
     </joint>
 
-    <link name="imu">
+    <link name="imu_link">
         <visual>
             <origin xyz="0.0 0.0 0.0" />
             <geometry>

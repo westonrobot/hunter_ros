@@ -1,0 +1,8 @@
+<launch>
+  <!-- <param name="/use_sim_time" value="true" /> -->
+
+  <include file="$(find hunter_cartographer)/launch/hunter_3d_slam.launch" />
+
+  <node name="rviz" pkg="rviz" type="rviz" required="true"
+      args="-d $(find hunter_cartographer)/configuration_files/demo_3d.rviz" />
+</launch>
