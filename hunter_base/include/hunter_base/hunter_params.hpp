@@ -25,7 +25,7 @@ struct HunterParams {
   // from user manual v1.2.6_S P4
   // max linear velocity: 1.5 m/s
   static constexpr double max_steer_angle =
-      0.65;  // in rad, 0.75 for inner wheel
+      0.582;  // in rad, 0.75 for inner wheel
   static constexpr double max_linear_speed = 1.5;  // in m/ss
 };
 }  // namespace westonrobot
