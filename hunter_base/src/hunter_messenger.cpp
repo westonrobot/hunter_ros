@@ -127,9 +127,11 @@ void HunterROSMessenger::PublishStateToROS() {
                      HunterParams::wheel_radius;
   status_msg.linear_velocity = (left_vel + right_vel) / 2.0;
 
-//   double phi = ConvertInnerAngleToCentral(state.steering_angle);
+  // TODO SHOULD NOT use this correction when new Firmware with right 
+  //     cmd/feedback of steering angle is updated
   double corrected_angle = state.steering_angle * 26.5 / 40.0;
   double phi = ConvertInnerAngleToCentral(corrected_angle);
+  //   double phi = ConvertInnerAngleToCentral(state.steering_angle);
   status_msg.steering_angle = phi;
 
   status_msg.base_state = state.base_state;
