@@ -1,4 +1,4 @@
--- Copyright 2016 The Cartographer Authors
+-- Copyright 2018 The Cartographer Authors
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -12,11 +12,25 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-include "hunter_3d_mapping.lua"
-
-TRAJECTORY_BUILDER.pure_localization_trimmer = {
-  max_submaps_to_keep = 3,
+options = {
+  tracking_frame = "base_link",
+  pipeline = {
+    {
+      action = "min_max_range_filter",
+      min_range = 1.,
+      max_range = 60.,
+    },
+    {
+      action = "write_ros_map",
+      range_data_inserter = {
+        insert_free_space = true,
+        hit_probability = 0.55,
+        miss_probability = 0.49,
+      },
+      filestem = "map",
+      resolution = 0.05,
+    }
+  }
 }
-POSE_GRAPH.optimize_every_n_nodes = 10
 
 return options

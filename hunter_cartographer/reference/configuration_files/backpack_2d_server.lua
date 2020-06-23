@@ -1,4 +1,4 @@
--- Copyright 2016 The Cartographer Authors
+-- Copyright 2018 The Cartographer Authors
 --
 -- Licensed under the Apache License, Version 2.0 (the "License");
 -- you may not use this file except in compliance with the License.
@@ -12,11 +12,8 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-include "hunter_3d_mapping.lua"
+include "map_builder_server.lua"
 
-TRAJECTORY_BUILDER.pure_localization_trimmer = {
-  max_submaps_to_keep = 3,
-}
-POSE_GRAPH.optimize_every_n_nodes = 10
+MAP_BUILDER_SERVER.map_builder.use_trajectory_builder_2d = true
 
-return options
+return MAP_BUILDER_SERVER

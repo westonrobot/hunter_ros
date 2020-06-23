@@ -41,7 +41,8 @@ class HunterWebotsInterface {
   ros::Subscriber gyro_sub_;
   ros::Subscriber accel_sub_;
   ros::Publisher imu_pub_;
-
+  
+  sensor_msgs::Imu accel_data_;
   tf2_ros::StaticTransformBroadcaster static_broadcaster_;
 
   static constexpr double l = HunterParams::wheelbase;

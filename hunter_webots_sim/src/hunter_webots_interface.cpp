@@ -383,10 +383,19 @@ void HunterWebotsInterface::UpdateSimState() {
 }
 
 void HunterWebotsInterface::GyroNewDataCallback(
-    const sensor_msgs::Imu::ConstPtr &msg) {}
+    const sensor_msgs::Imu::ConstPtr &msg) {
+  sensor_msgs::Imu imu_msg;
+  imu_msg = *msg;
+  imu_msg.linear_acceleration = accel_data_.linear_acceleration;
+  imu_msg.linear_acceleration_covariance =
+      accel_data_.linear_acceleration_covariance;
+  imu_pub_.publish(imu_msg);
+}
 
 void HunterWebotsInterface::AccelNewDataCallback(
-    const sensor_msgs::Imu::ConstPtr &msg) {}
+    const sensor_msgs::Imu::ConstPtr &msg) {
+  accel_data_ = *msg;
+}
 
 void HunterWebotsInterface::LidarNewPointCloudCallback(
     const sensor_msgs::PointCloud::ConstPtr &msg) {

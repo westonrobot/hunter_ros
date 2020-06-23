@@ -1,5 +1,6 @@
 <launch>
-  <arg name="bag_filenames" default="/home/rdu/WestonRobot/bag/20hz_lidar.bag" />
+  <!-- <arg name="bag_filenames" default="/home/rdu/WestonRobot/bag/20hz_lidar_odom.bag" /> -->
+  <arg name="bag_filenames" />
   <arg name="no_rviz" default="false"/>
   <arg name="rviz_config" default="$(find hunter_cartographer)/rviz/demo_3d.rviz"/>
   <arg name="configuration_directory" default="$(find hunter_cartographer)/configuration_files"/>
@@ -8,7 +9,7 @@
   <arg name="launch_prefix" default=""/>
 
   <include file="$(find hunter_cartographer)/launch/hunter_offline_3d_slam.launch">
-     <arg name="bag_filenames" value="$(arg bag_filenames)"/>
+    <arg name="bag_filenames" value="$(arg bag_filenames)"/>
     <arg name="no_rviz" value="$(arg no_rviz)"/>
     <arg name="rviz_config" value="$(arg rviz_config)"/>
     <arg name="configuration_directory" value="$(arg configuration_directory)"/>

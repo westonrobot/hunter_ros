@@ -12,11 +12,11 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-include "hunter_3d_mapping.lua"
+include "backpack_3d.lua"
 
 TRAJECTORY_BUILDER.pure_localization_trimmer = {
   max_submaps_to_keep = 3,
 }
-POSE_GRAPH.optimize_every_n_nodes = 10
+POSE_GRAPH.optimize_every_n_nodes = 100
 
 return options
