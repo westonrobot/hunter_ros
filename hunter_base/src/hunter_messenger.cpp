@@ -50,6 +50,7 @@ void HunterROSMessenger::ResetOdomIntegratorCallback(
 
 void HunterROSMessenger::TwistCmdCallback(
     const geometry_msgs::Twist::ConstPtr &msg) {
+  // TODO add cmd limits here
   if (!simulated_robot_) {
     double phi_i = ConvertCentralAngleToInner(msg->angular.z);
     std::cout << "set steering angle: " << phi_i << std::endl;
