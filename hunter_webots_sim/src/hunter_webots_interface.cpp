@@ -206,7 +206,7 @@ void HunterWebotsInterface::SetupIMU() {
   // publish tf
   geometry_msgs::TransformStamped static_transformStamped;
   static_transformStamped.header.stamp = ros::Time::now();
-  static_transformStamped.header.frame_id = "imu";
+  static_transformStamped.header.frame_id = "imu_link";
   static_transformStamped.child_frame_id = robot_name_ + "/imu";
   static_transformStamped.transform.translation.x = 0.32;
   static_transformStamped.transform.translation.y = 0;
