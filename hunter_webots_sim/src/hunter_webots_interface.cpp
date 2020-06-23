@@ -386,6 +386,7 @@ void HunterWebotsInterface::GyroNewDataCallback(
     const sensor_msgs::Imu::ConstPtr &msg) {
   sensor_msgs::Imu imu_msg;
   imu_msg = *msg;
+  imu_msg.header.frame_id = "imu_link";
   imu_msg.linear_acceleration = accel_data_.linear_acceleration;
   imu_msg.linear_acceleration_covariance =
       accel_data_.linear_acceleration_covariance;
