@@ -50,6 +50,12 @@ void HunterROSMessenger::ResetOdomIntegratorCallback(
 
 void HunterROSMessenger::TwistCmdCallback(
     const geometry_msgs::Twist::ConstPtr &msg) {
+  double steer_cmd = msg->angular.z;
+  if(steer_cmd > HunterParams::max_steer_angle_central)
+    steer_cmd = HunterParams::max_steer_angle_central;
+  if(steer_cmd < - HunterParams::max_steer_angle_central)
+      steer_cmd = - HunterParams::max_steer_angle_central;
+
   // TODO add cmd limits here
   if (!simulated_robot_) {
     double phi_i = ConvertCentralAngleToInner(msg->angular.z);
