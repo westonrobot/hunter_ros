@@ -59,7 +59,7 @@ void HunterROSMessenger::TwistCmdCallback(
   // TODO add cmd limits here
   if (!simulated_robot_) {
     double phi_i = ConvertCentralAngleToInner(msg->angular.z);
-    std::cout << "set steering angle: " << phi_i << std::endl;
+    // std::cout << "set steering angle: " << phi_i << std::endl;
     hunter_->SetMotionCommand(msg->linear.x, phi_i);
   } else {
     std::lock_guard<std::mutex> guard(twist_mutex_);

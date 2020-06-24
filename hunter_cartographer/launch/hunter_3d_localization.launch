@@ -16,7 +16,7 @@
 
 <launch>
   <!-- <param name="/use_sim_time" value="true" /> -->
-  <arg name="load_state_filename" default="/home/hunter/Workspace/maps/testmap.pbstream"/>
+  <arg name="load_state_filename" default="$(find hunter_cartographer)/maps/westonrobot.pbstream"/>
 
   <!-- <param name="robot_description"
     textfile="$(find cartographer_ros)/urdf/backpack_3d.urdf" /> -->
