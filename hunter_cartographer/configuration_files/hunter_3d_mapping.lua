@@ -55,7 +55,7 @@ POSE_GRAPH.constraint_builder.min_score = 0.62
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.66
 
 -- limit lidar points to avoid noise from far away
-TRAJECTORY_BUILDER_3D.max_range = 15
+-- TRAJECTORY_BUILDER_3D.max_range = 15
 
 POSE_GRAPH.optimization_problem.local_slam_pose_translation_weight = 1e5
 POSE_GRAPH.optimization_problem.local_slam_pose_rotation_weight = 1e5
