@@ -1,7 +1,8 @@
 <launch>
-    <include file="$(find hunter_base)/launch/hunter_base.launch" >
+    <!-- start base and load model -->
+    <include file="$(find hunter_base)/launch/hunter_base.launch">
         <arg name="port_name" default="can0" />
         <arg name="simulated_robot" default="false" />
     </include>
-    <include file="$(find hunter_description)/launch/load_nav_model.launch" />
+    <include file="$(find hunter_description)/launch/load_base_model.launch" />
 </launch>

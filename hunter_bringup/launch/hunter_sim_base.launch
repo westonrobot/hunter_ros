@@ -1,4 +1,4 @@
 <launch>
     <include file="$(find hunter_webots_sim)/launch/hunter_base.launch" />
-    <include file="$(find hunter_description)/launch/load_nav_model.launch" />
+    <include file="$(find hunter_description)/launch/load_base_model.launch" />
 </launch>

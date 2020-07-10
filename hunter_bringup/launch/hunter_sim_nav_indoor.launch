@@ -1,4 +1,9 @@
 <launch>
-    <include file="$(find hunter_webots_sim)/launch/hunter_base.launch" />
-    <include file="$(find hunter_description)/launch/load_nav_model.launch" />
+    <include file="$(find hunter_webots_sim)/launch/hunter_indoor_navigation.launch" />
+
+    <!-- set up sensors -->
+    <include file="$(find hunter_bringup)/launch/sensor_pointcloud_filter.launch" />
+    <!-- <include file="$(find hunter_bringup)/launch/sensor_pointcloud_to_laserscan.launch" /> -->
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find hunter_navigation)/rviz/rviz_navigation.rviz"/>
 </launch>

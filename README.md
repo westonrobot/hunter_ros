@@ -11,50 +11,11 @@
 
 ## Communication interface setup
 
-### Setup CAN interface on Nvidia Jetson Platforms
+Please refer to the [README](https://github.com/westonrobot/wrp_sdk#hardware-interface) of "wrp_sdk" package for setup of communication interfaces.
 
-Nvidia Jeston TX2/Xavier/XavierNX have CAN controller(s) integrated in the main SOC. If you're using a dev kit, you also need to add a CAN transceiver for proper CAN communication. 
+#### Note on CAN interface on Nvidia Jetson Platforms
 
-Please refer to this [note](https://wiki.rdu.im/_pages/Notes/Embedded-System/Linux/can-bus-in-linux.html) to learn more about the most commonly-used CAN interface commands in Linux.
-
-### Setup CAN-To-USB adapter 
-
-For testing, you can use the CAN-To-USB adapter to talk with the robot on any desktop/laptop:
- 
-1. Enable gs_usb kernel module
-   
-    ```
-    $ sudo modprobe gs_usb
-    ```
-
-2. Bringup can device
-   
-   ```
-   $ sudo ip link set can0 up type can bitrate 500000
-   ```
-
-3. If no error occured during the previous steps, you should be able to see the can device now by using command
-   
-   ```
-   $ ifconfig -a
-   ```
-
-4. Install and use can-utils to test the hardware
-   
-    ```
-    $ sudo apt install can-utils
-    ```
-
-5. Testing command
-   
-    ```
-    # receiving data from can0
-    $ candump can0
-    # send data to can0
-    $ cansend can0 001#1122334455667788
-    ```
-
-Two scripts inside the "hunter_bringup/scripts" folder are provided for easy setup. You can run "./setup_can2usb.bash" for the first-time setup and run "./bringup_can2usb.bash" to bring up the device each time you unplug and re-plug the adapter.
+Nvidia Jeston TX2/Xavier/XavierNX have CAN controller(s) integrated in the main SOC. If you're using a dev kit, you need to add a CAN transceiver for proper CAN communication. 
 
 ## Basic usage of the ROS package
 
@@ -73,7 +34,7 @@ Two scripts inside the "hunter_bringup/scripts" folder are provided for easy set
 
     ```
     $ cd ~/catkin_ws/src
-    $ git clone -b catkin https://github.com/westonrobot/wrp_sdk.git
+    $ git clone https://github.com/westonrobot/wrp_sdk.git
     $ git clone https://github.com/westonrobot/hunter_ros.git
     $ cd ..
     $ catkin_make
@@ -96,13 +57,19 @@ Two scripts inside the "hunter_bringup/scripts" folder are provided for easy set
 * Start the base node for the real robot
 
     ```
-    $ roslaunch hunter_bringup hunter_base.launch
+    $ roslaunch hunter_bringup hunter_robot_base.launch
     ```
 
-* Start the Webots-based simulation
+* Start the base node for the Webots-based simulator
 
     ```
-    $ roslaunch hunter_bringup hunter_base_webots_sim.launch
+    $ roslaunch hunter_bringup hunter_sim_base.launch
+    ```
+
+* Start the simulator in which basic navigation sensors are set up
+    
+    ```
+    $ roslaunch hunter_bringup hunter_sim_nav_indoor.launch
     ```
     
 **SAFETY PRECAUSION**: 

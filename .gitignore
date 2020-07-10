@@ -17,7 +17,8 @@ build_isolated/
 devel_isolated/
 
 # Webots temporary files
-hunter_webots_sim/worlds/.hunter_base.wbproj
+hunter_webots_sim/simulator/worlds/.hunter_base.wbproj
+hunter_webots_sim/simulator/worlds/.hunter_indoor.wbproj
 
 xaviernx_catkin.code-workspace
 xaviernx_dev_catkin.code-workspace

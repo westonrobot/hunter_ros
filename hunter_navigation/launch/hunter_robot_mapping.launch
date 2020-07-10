@@ -1,9 +1,0 @@
-<launch>
-
-    <!-- motion planning & control -->
-    <include file="$(find hunter_navigation)/launch/config_move_base.launch" />
-    
-    <!-- mapping -->
-    <include file="$(find hunter_navigation)/launch/config_gmapping.launch" />
-
-</launch>
