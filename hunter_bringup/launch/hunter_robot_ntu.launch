@@ -1,0 +1,13 @@
+<launch>
+    <!-- start base and load model -->
+    <include file="$(find hunter_base)/launch/hunter_base.launch">
+        <arg name="port_name" default="can0" />
+        <arg name="simulated_robot" default="false" />
+    </include>
+    <include file="$(find hunter_description)/launch/load_nav_model.launch" />
+
+    <!-- start sensors -->
+    <include file="$(find hunter_bringup)/launch/sensor_rs_lidar_16.launch" />
+    <include file="$(find hunter_bringup)/launch/sensor_imu.launch" />
+    <include file="$(find hunter_bringup)/launch/sensor_front_rear_d435.launch" />
+</launch>
