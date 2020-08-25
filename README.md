@@ -16,13 +16,16 @@ Nvidia Jeston TX2/Xavier/XavierNX have CAN controller(s) integrated in the main 
 
 ## Basic usage of the ROS package
 
-1. Install dependent ROS packages
+1. Install dependent packages
 
     ```
     $ sudo apt install -y libasio-dev
     $ sudo apt install -y ros-$ROS_DISTRO-teleop-twist-keyboard
     ```
-
+    ```
+    $ sudo apt install libasio-dev
+    ```
+    
 2. Clone the packages into your catkin workspace and compile
 
     (the following instructions assume your catkin workspace is at: ~/catkin_ws/src)
