@@ -17,7 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf2
   tf2_ros
-  wrp_sdk
+  ugv_sdk
 )
 
 ## System dependencies are found with CMake's conventions
@@ -112,7 +112,7 @@ add_subdirectory(ascent)
 catkin_package(
  INCLUDE_DIRS include
  LIBRARIES hunter_messenger
-#  CATKIN_DEPENDS hunter_msgs wrp_sdk roscpp sensor_msgs std_msgs tf2 tf2_ros 
+ CATKIN_DEPENDS ugv_sdk hunter_msgs
 #  DEPENDS system_lib
 )
 

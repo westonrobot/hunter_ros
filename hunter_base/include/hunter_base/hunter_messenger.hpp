@@ -19,7 +19,7 @@
 // #include <tf/transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
 
-#include "wrp_sdk/platforms/hunter/hunter_base.hpp"
+#include "ugv_sdk/hunter/hunter_base.hpp"
 
 #include "ascent/Ascent.h"
 #include "ascent/Utility.h"
