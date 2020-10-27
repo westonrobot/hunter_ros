@@ -13,6 +13,9 @@ uint8 base_state
 uint8 control_mode
 uint16 fault_code
 float64 battery_voltage
+uint8 park_mode
 
 # motor state
 HunterMotorState[3] motor_states
+# driver state
+HunterDriverState[3] driver_states

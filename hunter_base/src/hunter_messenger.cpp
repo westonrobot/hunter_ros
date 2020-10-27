@@ -21,6 +21,7 @@
 
 #include "hunter_base/hunter_messenger.hpp"
 #include "hunter_msgs/HunterStatus.h"
+#include "hunter_msgs/HunterMotorState.h"
 
 namespace westonrobot {
 HunterROSMessenger::HunterROSMessenger(ros::NodeHandle *nh)
@@ -60,7 +61,7 @@ void HunterROSMessenger::TwistCmdCallback(
   if (!simulated_robot_) {
     double phi_i = ConvertCentralAngleToInner(msg->angular.z);
     // std::cout << "set steering angle: " << phi_i << std::endl;
-    hunter_->SetMotionCommand(msg->linear.x, phi_i);
+    hunter_->SetMotionCommand(msg->linear.x, msg->angular.z, phi_i);
   } else {
     std::lock_guard<std::mutex> guard(twist_mutex_);
     current_twist_ = *msg.get();
@@ -126,10 +127,10 @@ void HunterROSMessenger::PublishStateToROS() {
 
   status_msg.header.stamp = current_time_;
 
-  double left_vel = -state.motor_states[1].rpm / 60.0 * 2 * M_PI /
+  double left_vel = -state.motor_H_state[2].rpm / 60.0 * 2 * M_PI /
                     HunterParams::transmission_reduction_rate *
                     HunterParams::wheel_radius;
-  double right_vel = state.motor_states[2].rpm / 60.0 * 2 * M_PI /
+  double right_vel = state.motor_H_state[1].rpm / 60.0 * 2 * M_PI /
                      HunterParams::transmission_reduction_rate *
                      HunterParams::wheel_radius;
   status_msg.linear_velocity = (left_vel + right_vel) / 2.0;
@@ -140,18 +141,22 @@ void HunterROSMessenger::PublishStateToROS() {
   double phi = ConvertInnerAngleToCentral(corrected_angle);
   //   double phi = ConvertInnerAngleToCentral(state.steering_angle);
   status_msg.steering_angle = phi;
-
   status_msg.base_state = state.base_state;
   status_msg.control_mode = state.control_mode;
+  status_msg.park_mode = state.park_mode;
   status_msg.fault_code = state.fault_code;
   status_msg.battery_voltage = state.battery_voltage;
-
   for (int i = 0; i < 3; ++i) {
-    status_msg.motor_states[i].current = state.motor_states[i].current;
-    status_msg.motor_states[i].rpm = state.motor_states[i].rpm;
-    status_msg.motor_states[i].temperature = state.motor_states[i].temperature;
+    status_msg.motor_states[i].current = state.motor_H_state[i].current;
+    status_msg.motor_states[i].rpm = state.motor_H_state[i].rpm;
+    status_msg.motor_states[i].motor_pose = state.motor_H_state[i].motor_pose;
+    status_msg.motor_states[i].temperature = state.motor_L_state[i].motor_temperature;
   }
-
+  for (int i = 0; i < 3; ++i) {
+    status_msg.driver_states[i].driver_state = state.motor_L_state[i].driver_state;
+    status_msg.driver_states[i].driver_voltage = state.motor_L_state[i].driver_voltage;
+    status_msg.driver_states[i].driver_temperature = state.motor_L_state[i].driver_temperature;
+  }
   status_publisher_.publish(status_msg);
 
   // publish odometry and tf

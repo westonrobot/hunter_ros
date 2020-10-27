@@ -16,11 +16,10 @@ Nvidia Jeston TX2/Xavier/XavierNX have CAN controller(s) integrated in the main 
 
 ## Basic usage of the ROS package
 
-If you're using ROS Kinetic in Ubuntu 16.04, please refer to instructions [here](https://apt.kitware.com/) to install the latest version of CMake. A version later than 3.10.2 is required.
-
 1. Install dependent packages
 
     ```
+    $ sudo apt install -y libasio-dev
     $ sudo apt install -y ros-$ROS_DISTRO-teleop-twist-keyboard
     ```
     
@@ -31,7 +30,7 @@ If you're using ROS Kinetic in Ubuntu 16.04, please refer to instructions [here]
     ```
     $ cd ~/catkin_ws/src
     $ git clone --recursive https://github.com/westonrobot/ugv_sdk.git
-    $ git clone https://github.com/westonrobot/hunter_base.git
+    $ git clone https://github.com/westonrobot/hunter_ros.git
     $ cd ..
     $ catkin_make
     ```

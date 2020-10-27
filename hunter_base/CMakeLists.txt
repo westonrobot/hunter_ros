@@ -113,7 +113,6 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES hunter_messenger
  CATKIN_DEPENDS ugv_sdk hunter_msgs
-#  DEPENDS system_lib
 )
 
 ###########
