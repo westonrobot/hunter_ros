@@ -8,7 +8,7 @@
 
 ## Communication interface setup
 
-Please refer to the [README](https://github.com/westonrobot/wrp_sdk#hardware-interface) of "wrp_sdk" package for setup of communication interfaces.
+Please refer to the [README](https://github.com/westonrobot/ugv_sdk#hardware-interface) of "ugv_sdk" package for setup of communication interfaces.
 
 #### Note on CAN interface on Nvidia Jetson Platforms
 
