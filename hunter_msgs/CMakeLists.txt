@@ -50,6 +50,8 @@ add_message_files(
   FILES
   HunterMotorState.msg
   HunterStatus.msg
+  HunterDriverState.msg
+  HunterBmsStatus.msg
 )
 
 ## Generate services in the 'srv' folder

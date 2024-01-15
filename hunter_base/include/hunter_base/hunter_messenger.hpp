@@ -16,16 +16,16 @@
 
 #include <string>
 
-// #include <tf/transform_broadcaster.h>
 #include <tf2_ros/transform_broadcaster.h>
 
-#include "ugv_sdk/hunter/hunter_base.hpp"
-
+#include "ugv_sdk/mobile_robot/hunter_robot.hpp"
+#include "ugv_sdk/utilities/protocol_detector.hpp"
+#include <mutex>
 #include "ascent/Ascent.h"
 #include "ascent/Utility.h"
 #include "hunter_base/bicycle_model.hpp"
 #include "hunter_base/hunter_params.hpp"
-// #include "hunter_base/system_propagator.hpp"
+
 
 namespace westonrobot {
 template <typename SystemModel>
@@ -52,13 +52,15 @@ class SystemPropagator {
 class HunterROSMessenger {
  public:
   explicit HunterROSMessenger(ros::NodeHandle *nh);
-  HunterROSMessenger(HunterBase *hunter, ros::NodeHandle *nh);
+  HunterROSMessenger(HunterRobot *hunter, ros::NodeHandle *nh);
 
   std::string odom_frame_;
   std::string base_frame_;
 
   bool simulated_robot_ = false;
   int sim_control_rate_ = 50;
+  bool publish_tf_ = true;
+  int version = 2;
 
   void SetupSubscription();
   void ResetOdometry();
@@ -67,9 +69,20 @@ class HunterROSMessenger {
   void PublishSimStateToROS(double linear, double angular);
 
   void GetCurrentMotionCmdForSim(double &linear, double &angular);
-
+  void SetWeelbase(float Weelbase){
+    l = Weelbase;
+  }
+  void SetTrack(float Track){
+    w = Track;
+  }
+  void SetMaxSteerAngleCentral(float Angle){
+    max_steer_angle_central = Angle;
+  }
+  void SetMaxSteerAngle(float Angle){
+    max_steer_angle = Angle;
+  }
  private:
-  HunterBase *hunter_;
+  HunterRobot *hunter_;
   ros::NodeHandle *nh_;
 
   std::mutex twist_mutex_;
@@ -77,6 +90,7 @@ class HunterROSMessenger {
 
   ros::Publisher odom_publisher_;
   ros::Publisher status_publisher_;
+  ros::Publisher BMS_status_publisher_;
   ros::Subscriber motion_cmd_subscriber_;
   ros::Subscriber integrator_reset_subscriber_;
   tf2_ros::TransformBroadcaster tf_broadcaster_;
@@ -85,10 +99,13 @@ class HunterROSMessenger {
   double linear_speed_ = 0.0;
   double steering_angle_ = 0.0;
 
-  static constexpr double l = HunterParams::wheelbase;
-  static constexpr double w = HunterParams::track;
+//  static constexpr double l = HunterV2Params::wheelbase;
+//  static constexpr double w = HunterV2Params::track;
   static constexpr double steer_angle_tolerance = 0.005;  // ~+-0.287 degrees
-
+  double l = 0.0;
+  double w = 0.0;
+  double max_steer_angle_central = 0.0;
+  double max_steer_angle = 0.0;
   // state variables
   double position_x_ = 0.0;
   double position_y_ = 0.0;
@@ -101,6 +118,7 @@ class HunterROSMessenger {
 
   double ConvertInnerAngleToCentral(double angle);
   double ConvertCentralAngleToInner(double angle);
+  double AngelVelocity2Angel(geometry_msgs::Twist msg,double &radius);
 
   void TwistCmdCallback(const geometry_msgs::Twist::ConstPtr &msg);
   void ResetOdomIntegratorCallback(const std_msgs::Bool::ConstPtr &msg);

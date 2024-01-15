@@ -113,7 +113,6 @@ catkin_package(
  INCLUDE_DIRS include
  LIBRARIES hunter_messenger
  CATKIN_DEPENDS ugv_sdk hunter_msgs
-#  DEPENDS system_lib
 )
 
 ###########
@@ -140,11 +139,11 @@ target_link_libraries(hunter_messenger ${catkin_LIBRARIES} ascent)
 add_executable(hunter_base_node src/hunter_base_node.cpp)
 target_link_libraries(hunter_base_node hunter_messenger ${catkin_LIBRARIES})
 
-add_executable(hunter_base_sim_node src/hunter_base_sim_node.cpp)
-target_link_libraries(hunter_base_sim_node hunter_messenger ${catkin_LIBRARIES})
+#add_executable(hunter_base_sim_node src/hunter_base_sim_node.cpp)
+#target_link_libraries(hunter_base_sim_node hunter_messenger ${catkin_LIBRARIES})
 
-add_executable(hunter_status_node src/hunter_status_node.cpp)
-target_link_libraries(hunter_status_node hunter_messenger ${catkin_LIBRARIES})
+#add_executable(hunter_status_node src/hunter_status_node.cpp)
+#target_link_libraries(hunter_status_node hunter_messenger ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
